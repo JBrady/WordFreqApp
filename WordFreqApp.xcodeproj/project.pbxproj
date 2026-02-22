@@ -18,6 +18,7 @@
 		A0D7D48B838A51FE742CB88E /* AnalyzerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28ACE8D4A918E63721AF4B68 /* AnalyzerTests.swift */; };
 		A71083991BFD81D3A47CA782 /* stopwords_en.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8AC1B7CA5912C82DDF226494 /* stopwords_en.txt */; };
 		B10D93C4D2DDE019F24FD951 /* TextLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDDA79A9399A67599D26CC3E /* TextLoader.swift */; };
+		C0145F19A4661A23C87EFC7F /* TextLoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82CD92813DAF0E97C80496F1 /* TextLoaderTests.swift */; };
 		D4FB1A1BF415087526C7CD2D /* WordFreqAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19910C3D955E92751DE41028 /* WordFreqAppApp.swift */; };
 /* End PBXBuildFile section */
 
@@ -39,6 +40,7 @@
 		3A61468F5686430D95B294AA /* CSVExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVExporter.swift; sourceTree = "<group>"; };
 		5732FDEDF69059C40A51AEEF /* Normalizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Normalizer.swift; sourceTree = "<group>"; };
 		69AC33E5FEA65061B31E4CDC /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		82CD92813DAF0E97C80496F1 /* TextLoaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextLoaderTests.swift; sourceTree = "<group>"; };
 		8AC1B7CA5912C82DDF226494 /* stopwords_en.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = stopwords_en.txt; sourceTree = "<group>"; };
 		9E506B5863E4C59D76C9EB4B /* Analyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analyzer.swift; sourceTree = "<group>"; };
 		A4FA25F0CF962CC7CEFE6117 /* WordFreqAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WordFreqAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -62,6 +64,7 @@
 			isa = PBXGroup;
 			children = (
 				28ACE8D4A918E63721AF4B68 /* AnalyzerTests.swift */,
+				82CD92813DAF0E97C80496F1 /* TextLoaderTests.swift */,
 			);
 			path = WordFreqAppTests;
 			sourceTree = "<group>";
@@ -196,6 +199,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A0D7D48B838A51FE742CB88E /* AnalyzerTests.swift in Sources */,
+				C0145F19A4661A23C87EFC7F /* TextLoaderTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

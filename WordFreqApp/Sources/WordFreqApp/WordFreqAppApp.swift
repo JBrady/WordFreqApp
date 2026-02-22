@@ -9,6 +9,5 @@ struct WordFreqAppApp: App {
             ContentView()
                 .environmentObject(appState)
         }
-        .windowResizability(.contentSize)
     }
 }

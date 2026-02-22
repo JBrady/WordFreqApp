@@ -1,10 +1,11 @@
+import AppKit
 import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject private var appState: AppState
-    @State private var showBundledStopwords = false
     @State private var showLoadedPreview = false
     @State private var showTokenSample = false
+    @State private var didConfigureWindow = false
 
     private var topNBinding: Binding<Int> {
         Binding(
@@ -27,7 +28,9 @@ struct ContentView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        ScrollView(.vertical) {
+            // Keep the root adaptive and scrollable so expanded sections are always reachable.
+            VStack(alignment: .leading, spacing: 14) {
             GroupBox("Input") {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack(spacing: 10) {
@@ -49,7 +52,7 @@ struct ContentView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(8)
                         }
-                        .frame(maxHeight: 130)
+                        .frame(maxHeight: 170)
                         .background(Color(NSColor.textBackgroundColor))
                         .overlay {
                             RoundedRectangle(cornerRadius: 4)
@@ -95,44 +98,30 @@ struct ContentView: View {
                 }
             }
 
-            GroupBox("Ignored Words") {
-                VStack(alignment: .leading, spacing: 8) {
-                    Text("Additional Words to Ignore (one per line)")
-                        .font(.subheadline)
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Automatically ignored words: \(appState.builtInStopwords.joined(separator: ", "))")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
 
-                    TextEditor(text: $appState.additionalStopwordsText)
-                        .font(.system(.body, design: .monospaced))
-                        .frame(minHeight: 110, maxHeight: 130)
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 4)
-                                .stroke(Color.secondary.opacity(0.25), lineWidth: 1)
-                        }
-                        .onChange(of: appState.additionalStopwordsText) { _ in
-                            appState.reanalyzeIfPossible()
-                        }
+                Text("Additional Words to Ignore (one per line)")
+                    .font(.subheadline)
 
-                    Text("Lines are trimmed, lowercased, and merged with bundled stopwords. Empty lines and lines starting with # are ignored.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-
-                    DisclosureGroup("Bundled Stopwords (Built-in) - \(appState.bundledStopwordsCount) words", isExpanded: $showBundledStopwords) {
-                        ScrollView {
-                            Text(appState.builtInStopwords.joined(separator: "\n"))
-                                .textSelection(.enabled)
-                                .font(.system(.caption, design: .monospaced))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(8)
-                        }
-                        .frame(maxHeight: 180)
-                        .background(Color(NSColor.textBackgroundColor))
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 4)
-                                .stroke(Color.secondary.opacity(0.25), lineWidth: 1)
-                        }
+                TextEditor(text: $appState.additionalStopwordsText)
+                    .font(.system(.body, design: .monospaced))
+                    .frame(minHeight: 110, maxHeight: 130)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 4)
+                            .stroke(Color.secondary.opacity(0.25), lineWidth: 1)
                     }
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
+                    .onChange(of: appState.additionalStopwordsText) { _ in
+                        appState.reanalyzeIfPossible()
+                    }
+
+                Text("Lines are trimmed, lowercased, and merged with default ignored words. Empty lines and lines starting with # are ignored.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
 
             HStack(spacing: 10) {
                 Button("Analyze") {
@@ -170,7 +159,7 @@ struct ContentView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(8)
                 }
-                .frame(maxHeight: 120)
+                .frame(maxHeight: 180)
                 .background(Color(NSColor.textBackgroundColor))
                 .overlay {
                     RoundedRectangle(cornerRadius: 4)
@@ -188,15 +177,36 @@ struct ContentView: View {
                 }
                 .width(min: 100, max: 120)
             }
-            .frame(minHeight: 320)
+            .frame(minHeight: 320, idealHeight: 380, maxHeight: 420)
 
             Text(appState.statusMessage)
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .lineLimit(2)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(16)
         }
-        .padding(16)
-        .frame(minWidth: 840, minHeight: 760)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .onAppear(perform: configureWindowIfNeeded)
+    }
+
+    private func configureWindowIfNeeded() {
+        guard !didConfigureWindow else { return }
+
+        DispatchQueue.main.async {
+            guard !didConfigureWindow, let window = NSApp.windows.first else { return }
+
+            didConfigureWindow = true
+            let minimumSize = NSSize(width: 800, height: 650)
+            let defaultSize = NSSize(width: 900, height: 750)
+            window.minSize = minimumSize
+
+            let currentSize = window.frame.size
+            if currentSize.width < defaultSize.width || currentSize.height < defaultSize.height {
+                window.setContentSize(defaultSize)
+            }
+        }
     }
 }
 

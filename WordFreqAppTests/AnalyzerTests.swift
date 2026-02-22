@@ -151,8 +151,8 @@ final class AnalyzerTests: XCTestCase {
 
     func testBuiltInStopwordsLoadFromBundle() throws {
         let builtIn = try Stopwords.loadBuiltIn(bundle: .main)
-        XCTAssertGreaterThan(builtIn.count, 0)
-        XCTAssertTrue(builtIn.contains("the"))
+        XCTAssertEqual(builtIn.count, 11)
+        XCTAssertEqual(builtIn, Set(Stopwords.builtInWords))
     }
 
     private func analyzeToMap(

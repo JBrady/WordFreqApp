@@ -55,7 +55,31 @@ final class AppState: ObservableObject {
 
         if panel.runModal() == .OK, let url = panel.url {
             selectedFileURL = url
-            statusMessage = "Selected: \(url.lastPathComponent)"
+            do {
+                let text = try TextLoader.loadText(at: url)
+                updatePreview(with: text)
+                debugTokenCount = 0
+                debugSampleTokens = []
+                debugBuiltInIgnoredCount = builtInStopwordsSet.count
+                debugAdditionalIgnoredCount = Stopwords.parse(rawText: additionalStopwordsText).count
+                debugMergedIgnoredCount = Stopwords.merged(
+                    builtIn: builtInStopwordsSet,
+                    additionalRawText: additionalStopwordsText
+                ).count
+
+                let base = "Selected: \(url.lastPathComponent)"
+                if let warning = nonLatinWarning(for: text, allowNonLatin: options.allowNonLatinLetters) {
+                    statusMessage = "\(base). \(warning)"
+                } else {
+                    statusMessage = base
+                }
+            } catch {
+                debugLoadedChars = 0
+                debugPreview = ""
+                debugTokenCount = 0
+                debugSampleTokens = []
+                statusMessage = error.localizedDescription
+            }
         }
     }
 
@@ -67,10 +91,7 @@ final class AppState: ObservableObject {
 
         do {
             let text = try TextLoader.loadText(at: selectedFileURL)
-
-            // DEBUG: how much text did we load?
-            debugLoadedChars = text.count
-            debugPreview = String(text.prefix(300))
+            updatePreview(with: text)
 
             // Tokenize the same way Analyzer does
             let normalized = Normalizer.normalize(text)
@@ -93,7 +114,11 @@ final class AppState: ObservableObject {
             debugMergedIgnoredCount = stopwords.count
 
             results = Analyzer.analyze(text: text, stopwords: stopwords, options: clampedOptions)
-            statusMessage = "Analysis complete. Found \(results.count) words."
+            if let warning = nonLatinWarning(for: text, allowNonLatin: clampedOptions.allowNonLatinLetters) {
+                statusMessage = "Analysis complete. Found \(results.count) words. \(warning)"
+            } else {
+                statusMessage = "Analysis complete. Found \(results.count) words."
+            }
         } catch {
             results = []
             statusMessage = error.localizedDescription
@@ -151,11 +176,51 @@ final class AppState: ObservableObject {
     private func loadBundledStopwords() {
         do {
             builtInStopwordsSet = try Stopwords.loadBuiltIn()
-            builtInStopwords = builtInStopwordsSet.sorted()
+            builtInStopwords = Stopwords.builtInWords
+            debugBuiltInIgnoredCount = builtInStopwordsSet.count
         } catch {
             builtInStopwordsSet = []
             builtInStopwords = []
             statusMessage = "Could not load bundled stopwords: \(error.localizedDescription)"
         }
+    }
+
+    private func updatePreview(with text: String) {
+        debugLoadedChars = text.count
+        debugPreview = String(text.prefix(300))
+    }
+
+    private func nonLatinWarning(for text: String, allowNonLatin: Bool) -> String? {
+        guard !allowNonLatin else { return nil }
+
+        let sample = text.prefix(1200)
+        var totalLetters = 0
+        var nonLatinLetters = 0
+
+        for scalar in sample.unicodeScalars {
+            guard scalar.properties.isAlphabetic else { continue }
+            totalLetters += 1
+            if !isLatinLetter(scalar) {
+                nonLatinLetters += 1
+            }
+        }
+
+        guard totalLetters >= 30 else { return nil }
+        let nonLatinRatio = Double(nonLatinLetters) / Double(totalLetters)
+        guard nonLatinRatio >= 0.70 else { return nil }
+
+        return "Warning: text preview appears mostly non-Latin while \"Allow non-Latin letters\" is off. Verify file encoding/content."
+    }
+
+    private func isLatinLetter(_ scalar: UnicodeScalar) -> Bool {
+        let value = scalar.value
+        return (0x0041...0x007A).contains(value)
+            || (0x00C0...0x00FF).contains(value)
+            || (0x0100...0x017F).contains(value)
+            || (0x0180...0x024F).contains(value)
+            || (0x1E00...0x1EFF).contains(value)
+            || (0x2C60...0x2C7F).contains(value)
+            || (0xA720...0xA7FF).contains(value)
+            || (0xAB30...0xAB6F).contains(value)
     }
 }
