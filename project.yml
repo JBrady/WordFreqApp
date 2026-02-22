@@ -13,8 +13,8 @@ targets:
     platform: macOS
     sources:
       - path: WordFreqApp/Sources/WordFreqApp
-    resources:
       - path: WordFreqApp/Resources
+        buildPhase: resources
     settings:
       base:
         PRODUCT_NAME: WordFreqApp
@@ -24,4 +24,15 @@ targets:
         SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
         ENABLE_HARDENED_RUNTIME: YES
     scheme:
-      testTargets: []
+      testTargets:
+        - WordFreqAppTests
+  WordFreqAppTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: WordFreqAppTests
+    dependencies:
+      - target: WordFreqApp
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES

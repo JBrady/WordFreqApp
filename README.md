@@ -12,7 +12,8 @@ Native macOS desktop app (Swift 5.9+, SwiftUI) that computes word frequencies fr
   - Include numbers (default `off`)
 - Stopwords:
   - Built-in English stopwords bundled with app
-  - Optional custom stopwords file (one word per line), merged with built-in
+  - Inline additional words editor (one word per line), merged with built-in
+  - Built-in stopwords are viewable in a collapsible read-only section in the app
 - Analyze and view table: `Word | Count` sorted descending by count
 - Filter results via search box
 - Export CSV (`word,count`)
