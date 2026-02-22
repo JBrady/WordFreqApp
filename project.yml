@@ -1,0 +1,27 @@
+name: WordFreqApp
+options:
+  minimumXcodeGenVersion: 2.38.0
+settings:
+  base:
+    PRODUCT_BUNDLE_IDENTIFIER: com.example.WordFreqApp
+    SWIFT_VERSION: 5.9
+    MACOSX_DEPLOYMENT_TARGET: 13.0
+    CODE_SIGN_STYLE: Automatic
+targets:
+  WordFreqApp:
+    type: application
+    platform: macOS
+    sources:
+      - path: WordFreqApp/Sources/WordFreqApp
+    resources:
+      - path: WordFreqApp/Resources
+    settings:
+      base:
+        PRODUCT_NAME: WordFreqApp
+        INFOPLIST_KEY_CFBundleDisplayName: WordFreqApp
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.productivity
+        GENERATE_INFOPLIST_FILE: YES
+        SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
+        ENABLE_HARDENED_RUNTIME: YES
+    scheme:
+      testTargets: []

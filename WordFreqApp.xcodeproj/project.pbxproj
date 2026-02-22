@@ -1,0 +1,346 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 63;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1CB53721356F9965318D1CBE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69AC33E5FEA65061B31E4CDC /* ContentView.swift */; };
+		1F1CCBDB23762B8A48F40A6D /* Analyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E506B5863E4C59D76C9EB4B /* Analyzer.swift */; };
+		1F6E82DCE80F58A8CC53DE16 /* CSVExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A61468F5686430D95B294AA /* CSVExporter.swift */; };
+		263682BC398588B6AB4C7803 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097DF155D265C037D509792E /* AppState.swift */; };
+		60435BD02F4A7D01002FA60D /* stopwords_en.txt in Resources */ = {isa = PBXBuildFile; fileRef = 60435BCD2F4A7B5F002FA60D /* stopwords_en.txt */; };
+		64718841E23D82C9A83296BA /* Tokenizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89C14C64F430ABBA2CE7EA0 /* Tokenizer.swift */; };
+		6D745979D05CE9DD2CDB94C5 /* Stopwords.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF20F0EE7BD24B078BE1B675 /* Stopwords.swift */; };
+		9D936147911FFDE9DA16504D /* Normalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5732FDEDF69059C40A51AEEF /* Normalizer.swift */; };
+		B10D93C4D2DDE019F24FD951 /* TextLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDDA79A9399A67599D26CC3E /* TextLoader.swift */; };
+		D4FB1A1BF415087526C7CD2D /* WordFreqAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19910C3D955E92751DE41028 /* WordFreqAppApp.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		097DF155D265C037D509792E /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		19910C3D955E92751DE41028 /* WordFreqAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordFreqAppApp.swift; sourceTree = "<group>"; };
+		3A61468F5686430D95B294AA /* CSVExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVExporter.swift; sourceTree = "<group>"; };
+		5732FDEDF69059C40A51AEEF /* Normalizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Normalizer.swift; sourceTree = "<group>"; };
+		60435BCD2F4A7B5F002FA60D /* stopwords_en.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = stopwords_en.txt; sourceTree = SOURCE_ROOT; };
+		69AC33E5FEA65061B31E4CDC /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		9E506B5863E4C59D76C9EB4B /* Analyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analyzer.swift; sourceTree = "<group>"; };
+		B243D4EC878975BF664C6CE3 /* WordFreqApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WordFreqApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D89C14C64F430ABBA2CE7EA0 /* Tokenizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tokenizer.swift; sourceTree = "<group>"; };
+		FDDA79A9399A67599D26CC3E /* TextLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextLoader.swift; sourceTree = "<group>"; };
+		FF20F0EE7BD24B078BE1B675 /* Stopwords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stopwords.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		4E4D08C678D875C0639A2138 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B243D4EC878975BF664C6CE3 /* WordFreqApp.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		901840AE9F1790FAE929B622 /* WordFreqApp */ = {
+			isa = PBXGroup;
+			children = (
+				9E506B5863E4C59D76C9EB4B /* Analyzer.swift */,
+				097DF155D265C037D509792E /* AppState.swift */,
+				69AC33E5FEA65061B31E4CDC /* ContentView.swift */,
+				3A61468F5686430D95B294AA /* CSVExporter.swift */,
+				5732FDEDF69059C40A51AEEF /* Normalizer.swift */,
+				FF20F0EE7BD24B078BE1B675 /* Stopwords.swift */,
+				FDDA79A9399A67599D26CC3E /* TextLoader.swift */,
+				D89C14C64F430ABBA2CE7EA0 /* Tokenizer.swift */,
+				19910C3D955E92751DE41028 /* WordFreqAppApp.swift */,
+				60435BCD2F4A7B5F002FA60D /* stopwords_en.txt */,
+			);
+			name = WordFreqApp;
+			path = WordFreqApp/Sources/WordFreqApp;
+			sourceTree = "<group>";
+		};
+		9E2F8BE00B10C5C5746870F9 = {
+			isa = PBXGroup;
+			children = (
+				901840AE9F1790FAE929B622 /* WordFreqApp */,
+				4E4D08C678D875C0639A2138 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5500494B39154C559E174041 /* WordFreqApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 03C345AD715B4606CFD1BAEE /* Build configuration list for PBXNativeTarget "WordFreqApp" */;
+			buildPhases = (
+				AC6B23D82E5CA71A8F0BC062 /* Sources */,
+				60435BCE2F4A7CAD002FA60D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WordFreqApp;
+			packageProductDependencies = (
+			);
+			productName = WordFreqApp;
+			productReference = B243D4EC878975BF664C6CE3 /* WordFreqApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		1BDB4085C36A55904564F7DB /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					5500494B39154C559E174041 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 81B4134CC869FCC941D29380 /* Build configuration list for PBXProject "WordFreqApp" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 9E2F8BE00B10C5C5746870F9;
+			minimizedProjectReferenceProxies = 1;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5500494B39154C559E174041 /* WordFreqApp */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		60435BCE2F4A7CAD002FA60D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				60435BD02F4A7D01002FA60D /* stopwords_en.txt in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AC6B23D82E5CA71A8F0BC062 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1F1CCBDB23762B8A48F40A6D /* Analyzer.swift in Sources */,
+				263682BC398588B6AB4C7803 /* AppState.swift in Sources */,
+				1F6E82DCE80F58A8CC53DE16 /* CSVExporter.swift in Sources */,
+				1CB53721356F9965318D1CBE /* ContentView.swift in Sources */,
+				9D936147911FFDE9DA16504D /* Normalizer.swift in Sources */,
+				6D745979D05CE9DD2CDB94C5 /* Stopwords.swift in Sources */,
+				B10D93C4D2DDE019F24FD951 /* TextLoader.swift in Sources */,
+				64718841E23D82C9A83296BA /* Tokenizer.swift in Sources */,
+				D4FB1A1BF415087526C7CD2D /* WordFreqAppApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		062C78DB3E9E2F694B5E13E2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = Z9D957576J;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = WordFreqApp;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.jbradysd.wordfreqapp;
+				PRODUCT_NAME = WordFreqApp;
+				SDKROOT = macosx;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+			};
+			name = Debug;
+		};
+		0866D016A1DD22FB1E147CF9 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = Z9D957576J;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = WordFreqApp;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.jbradysd.wordfreqapp;
+				PRODUCT_NAME = WordFreqApp;
+				SDKROOT = macosx;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+			};
+			name = Release;
+		};
+		0FE3874D36DE8633D7F53780 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.WordFreqApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		6FA1EBCCBC129F0655C63E9C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.WordFreqApp;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		03C345AD715B4606CFD1BAEE /* Build configuration list for PBXNativeTarget "WordFreqApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				062C78DB3E9E2F694B5E13E2 /* Debug */,
+				0866D016A1DD22FB1E147CF9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		81B4134CC869FCC941D29380 /* Build configuration list for PBXProject "WordFreqApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6FA1EBCCBC129F0655C63E9C /* Debug */,
+				0FE3874D36DE8633D7F53780 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 1BDB4085C36A55904564F7DB /* Project object */;
+}
