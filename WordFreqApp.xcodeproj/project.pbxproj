@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 63;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -11,22 +11,37 @@
 		1F1CCBDB23762B8A48F40A6D /* Analyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E506B5863E4C59D76C9EB4B /* Analyzer.swift */; };
 		1F6E82DCE80F58A8CC53DE16 /* CSVExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A61468F5686430D95B294AA /* CSVExporter.swift */; };
 		263682BC398588B6AB4C7803 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097DF155D265C037D509792E /* AppState.swift */; };
-		60435BD02F4A7D01002FA60D /* stopwords_en.txt in Resources */ = {isa = PBXBuildFile; fileRef = 60435BCD2F4A7B5F002FA60D /* stopwords_en.txt */; };
 		64718841E23D82C9A83296BA /* Tokenizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89C14C64F430ABBA2CE7EA0 /* Tokenizer.swift */; };
 		6D745979D05CE9DD2CDB94C5 /* Stopwords.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF20F0EE7BD24B078BE1B675 /* Stopwords.swift */; };
+		8B5D5D616459CF78348BFD6A /* Clamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AE52FAED6BD4DD3CACE4FE3 /* Clamp.swift */; };
 		9D936147911FFDE9DA16504D /* Normalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5732FDEDF69059C40A51AEEF /* Normalizer.swift */; };
+		A0D7D48B838A51FE742CB88E /* AnalyzerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28ACE8D4A918E63721AF4B68 /* AnalyzerTests.swift */; };
+		A71083991BFD81D3A47CA782 /* stopwords_en.txt in Resources */ = {isa = PBXBuildFile; fileRef = 8AC1B7CA5912C82DDF226494 /* stopwords_en.txt */; };
 		B10D93C4D2DDE019F24FD951 /* TextLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDDA79A9399A67599D26CC3E /* TextLoader.swift */; };
 		D4FB1A1BF415087526C7CD2D /* WordFreqAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19910C3D955E92751DE41028 /* WordFreqAppApp.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		A2AAD9050F6583BD0BA3A9AC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1BDB4085C36A55904564F7DB /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5500494B39154C559E174041;
+			remoteInfo = WordFreqApp;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
 		097DF155D265C037D509792E /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		19910C3D955E92751DE41028 /* WordFreqAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordFreqAppApp.swift; sourceTree = "<group>"; };
+		1AE52FAED6BD4DD3CACE4FE3 /* Clamp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Clamp.swift; sourceTree = "<group>"; };
+		28ACE8D4A918E63721AF4B68 /* AnalyzerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyzerTests.swift; sourceTree = "<group>"; };
 		3A61468F5686430D95B294AA /* CSVExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVExporter.swift; sourceTree = "<group>"; };
 		5732FDEDF69059C40A51AEEF /* Normalizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Normalizer.swift; sourceTree = "<group>"; };
-		60435BCD2F4A7B5F002FA60D /* stopwords_en.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = stopwords_en.txt; sourceTree = SOURCE_ROOT; };
 		69AC33E5FEA65061B31E4CDC /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		8AC1B7CA5912C82DDF226494 /* stopwords_en.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = stopwords_en.txt; sourceTree = "<group>"; };
 		9E506B5863E4C59D76C9EB4B /* Analyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analyzer.swift; sourceTree = "<group>"; };
+		A4FA25F0CF962CC7CEFE6117 /* WordFreqAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WordFreqAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B243D4EC878975BF664C6CE3 /* WordFreqApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WordFreqApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D89C14C64F430ABBA2CE7EA0 /* Tokenizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tokenizer.swift; sourceTree = "<group>"; };
 		FDDA79A9399A67599D26CC3E /* TextLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextLoader.swift; sourceTree = "<group>"; };
@@ -38,8 +53,17 @@
 			isa = PBXGroup;
 			children = (
 				B243D4EC878975BF664C6CE3 /* WordFreqApp.app */,
+				A4FA25F0CF962CC7CEFE6117 /* WordFreqAppTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		4FDED29AA55C33E4928FC426 /* WordFreqAppTests */ = {
+			isa = PBXGroup;
+			children = (
+				28ACE8D4A918E63721AF4B68 /* AnalyzerTests.swift */,
+			);
+			path = WordFreqAppTests;
 			sourceTree = "<group>";
 		};
 		901840AE9F1790FAE929B622 /* WordFreqApp */ = {
@@ -47,6 +71,7 @@
 			children = (
 				9E506B5863E4C59D76C9EB4B /* Analyzer.swift */,
 				097DF155D265C037D509792E /* AppState.swift */,
+				1AE52FAED6BD4DD3CACE4FE3 /* Clamp.swift */,
 				69AC33E5FEA65061B31E4CDC /* ContentView.swift */,
 				3A61468F5686430D95B294AA /* CSVExporter.swift */,
 				5732FDEDF69059C40A51AEEF /* Normalizer.swift */,
@@ -54,7 +79,6 @@
 				FDDA79A9399A67599D26CC3E /* TextLoader.swift */,
 				D89C14C64F430ABBA2CE7EA0 /* Tokenizer.swift */,
 				19910C3D955E92751DE41028 /* WordFreqAppApp.swift */,
-				60435BCD2F4A7B5F002FA60D /* stopwords_en.txt */,
 			);
 			name = WordFreqApp;
 			path = WordFreqApp/Sources/WordFreqApp;
@@ -63,20 +87,49 @@
 		9E2F8BE00B10C5C5746870F9 = {
 			isa = PBXGroup;
 			children = (
+				F5C9D9F1EDC200547069EC25 /* Resources */,
 				901840AE9F1790FAE929B622 /* WordFreqApp */,
+				4FDED29AA55C33E4928FC426 /* WordFreqAppTests */,
 				4E4D08C678D875C0639A2138 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		F5C9D9F1EDC200547069EC25 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				8AC1B7CA5912C82DDF226494 /* stopwords_en.txt */,
+			);
+			name = Resources;
+			path = WordFreqApp/Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		4042AB1E6C24E3BDF0560858 /* WordFreqAppTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5EB089D686F0D6C2FC4A8394 /* Build configuration list for PBXNativeTarget "WordFreqAppTests" */;
+			buildPhases = (
+				0988667C8643BB8D635402E9 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				21D0FA2DE091147C7D2A9DF2 /* PBXTargetDependency */,
+			);
+			name = WordFreqAppTests;
+			packageProductDependencies = (
+			);
+			productName = WordFreqAppTests;
+			productReference = A4FA25F0CF962CC7CEFE6117 /* WordFreqAppTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		5500494B39154C559E174041 /* WordFreqApp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 03C345AD715B4606CFD1BAEE /* Build configuration list for PBXNativeTarget "WordFreqApp" */;
 			buildPhases = (
 				AC6B23D82E5CA71A8F0BC062 /* Sources */,
-				60435BCE2F4A7CAD002FA60D /* Resources */,
+				3224B6813EA075FEDB939804 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -98,6 +151,9 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					4042AB1E6C24E3BDF0560858 = {
+						ProvisioningStyle = Automatic;
+					};
 					5500494B39154C559E174041 = {
 						ProvisioningStyle = Automatic;
 					};
@@ -113,26 +169,36 @@
 			);
 			mainGroup = 9E2F8BE00B10C5C5746870F9;
 			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				5500494B39154C559E174041 /* WordFreqApp */,
+				4042AB1E6C24E3BDF0560858 /* WordFreqAppTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		60435BCE2F4A7CAD002FA60D /* Resources */ = {
+		3224B6813EA075FEDB939804 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				60435BD02F4A7D01002FA60D /* stopwords_en.txt in Resources */,
+				A71083991BFD81D3A47CA782 /* stopwords_en.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		0988667C8643BB8D635402E9 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A0D7D48B838A51FE742CB88E /* AnalyzerTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		AC6B23D82E5CA71A8F0BC062 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -140,6 +206,7 @@
 				1F1CCBDB23762B8A48F40A6D /* Analyzer.swift in Sources */,
 				263682BC398588B6AB4C7803 /* AppState.swift in Sources */,
 				1F6E82DCE80F58A8CC53DE16 /* CSVExporter.swift in Sources */,
+				8B5D5D616459CF78348BFD6A /* Clamp.swift in Sources */,
 				1CB53721356F9965318D1CBE /* ContentView.swift in Sources */,
 				9D936147911FFDE9DA16504D /* Normalizer.swift in Sources */,
 				6D745979D05CE9DD2CDB94C5 /* Stopwords.swift in Sources */,
@@ -151,14 +218,20 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		21D0FA2DE091147C7D2A9DF2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5500494B39154C559E174041 /* WordFreqApp */;
+			targetProxy = A2AAD9050F6583BD0BA3A9AC /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
 		062C78DB3E9E2F694B5E13E2 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = Z9D957576J;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = WordFreqApp;
@@ -167,7 +240,6 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jbradysd.wordfreqapp;
 				PRODUCT_NAME = WordFreqApp;
 				SDKROOT = macosx;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -178,9 +250,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = Z9D957576J;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = WordFreqApp;
@@ -189,7 +259,6 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.jbradysd.wordfreqapp;
 				PRODUCT_NAME = WordFreqApp;
 				SDKROOT = macosx;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -253,6 +322,22 @@
 				SWIFT_VERSION = 5.9;
 			};
 			name = Release;
+		};
+		1268F62E556F38B705B98FDA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WordFreqApp.app/Contents/MacOS/WordFreqApp";
+			};
+			name = Debug;
 		};
 		6FA1EBCCBC129F0655C63E9C /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -319,6 +404,22 @@
 			};
 			name = Debug;
 		};
+		7D4A45C00C98812CBA4D6F16 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WordFreqApp.app/Contents/MacOS/WordFreqApp";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -327,6 +428,15 @@
 			buildConfigurations = (
 				062C78DB3E9E2F694B5E13E2 /* Debug */,
 				0866D016A1DD22FB1E147CF9 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		5EB089D686F0D6C2FC4A8394 /* Build configuration list for PBXNativeTarget "WordFreqAppTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1268F62E556F38B705B98FDA /* Debug */,
+				7D4A45C00C98812CBA4D6F16 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

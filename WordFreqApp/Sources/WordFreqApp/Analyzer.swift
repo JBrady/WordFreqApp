@@ -12,6 +12,7 @@ struct AnalysisOptions {
     var minWordLength: Int = 2
     var keepInternalApostrophes: Bool = false
     var includeNumbers: Bool = false
+    var allowNonLatinLetters: Bool = false
 }
 
 enum Analyzer {
@@ -19,7 +20,8 @@ enum Analyzer {
         let normalized = Normalizer.normalize(text)
         let tokenizerOptions = TokenizerOptions(
             keepInternalApostrophes: options.keepInternalApostrophes,
-            includeNumbers: options.includeNumbers
+            includeNumbers: options.includeNumbers,
+            allowNonLatinLetters: options.allowNonLatinLetters
         )
 
         let tokens = Tokenizer.tokenize(normalized, options: tokenizerOptions)

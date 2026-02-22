@@ -39,6 +39,17 @@
          </BuildableReference>
       </MacroExpansion>
       <Testables>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "4042AB1E6C24E3BDF0560858"
+               BuildableName = "WordFreqAppTests.xctest"
+               BlueprintName = "WordFreqAppTests"
+               ReferencedContainer = "container:WordFreqApp.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <CommandLineArguments>
       </CommandLineArguments>
