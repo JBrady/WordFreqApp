@@ -27,6 +27,8 @@ final class AppState: ObservableObject {
     private var builtInStopwordsSet: Set<String> = []
     private var analyzeTask: Task<Void, Never>?
     private var activeAnalyzeRunID: UUID?
+    private var fileLoadTask: Task<Void, Never>?
+    private var activeFileLoadRunID: UUID?
 
     nonisolated static let topNRange = 1...5000
     nonisolated static let minLengthRange = 1...20
@@ -58,6 +60,7 @@ final class AppState: ObservableObject {
     }
 
     func choosePlayFile() {
+        cancelFileLoadIfRunning()
         cancelAnalysisIfRunning()
 
         let panel = NSOpenPanel()
@@ -67,6 +70,7 @@ final class AppState: ObservableObject {
         panel.allowedContentTypes = [UTType.plainText, UTType.text]
 
         if panel.runModal() == .OK, let url = panel.url {
+            cancelFileLoadIfRunning()
             cancelAnalysisIfRunning()
             clearPreviewAndDebugData()
 
@@ -76,19 +80,52 @@ final class AppState: ObservableObject {
                 return
             }
 
-            do {
-                let text = try withSecurityScopedAccess(to: url) {
-                    try TextLoader.loadText(at: url)
+            let runID = UUID()
+            activeFileLoadRunID = runID
+            let builtInStopwordsSet = builtInStopwordsSet
+            let additionalStopwordsText = additionalStopwordsText
+
+            fileLoadTask = Task.detached(priority: .userInitiated) { [url] in
+                do {
+                    let text = try Self.loadTextWithSecurityAccess(from: url)
+                    try Task.checkCancellation()
+
+                    let previewData = Self.buildPreviewData(from: text)
+                    let additionalCount = Stopwords.parse(rawText: additionalStopwordsText).count
+                    let mergedCount = Stopwords.merged(
+                        builtIn: builtInStopwordsSet,
+                        additionalRawText: additionalStopwordsText
+                    ).count
+
+                    try Task.checkCancellation()
+                    await MainActor.run {
+                        guard !Task.isCancelled, self.activeFileLoadRunID == runID else { return }
+                        self.fileLoadTask = nil
+                        self.activeFileLoadRunID = nil
+                        self.selectedFileURL = url
+                        self.applyPreviewData(previewData)
+                        self.debugBuiltInIgnoredCount = builtInStopwordsSet.count
+                        self.debugAdditionalIgnoredCount = additionalCount
+                        self.debugMergedIgnoredCount = mergedCount
+                        self.invalidateResults()
+                    }
+                } catch is CancellationError {
+                    await MainActor.run {
+                        guard self.activeFileLoadRunID == runID else { return }
+                        self.fileLoadTask = nil
+                        self.activeFileLoadRunID = nil
+                    }
+                } catch {
+                    await MainActor.run {
+                        guard self.activeFileLoadRunID == runID else { return }
+                        self.fileLoadTask = nil
+                        self.activeFileLoadRunID = nil
+                        self.cancelAnalysisIfRunning()
+                        self.selectedFileURL = nil
+                        self.clearPreviewAndDebugData()
+                        self.invalidateResults(statusMessageOverride: self.friendlyLoadErrorMessage(for: error))
+                    }
                 }
-                selectedFileURL = url
-                applyPreviewData(Self.buildPreviewData(from: text))
-                refreshDebugStopwordCounts()
-                invalidateResults()
-            } catch {
-                cancelAnalysisIfRunning()
-                selectedFileURL = nil
-                clearPreviewAndDebugData()
-                invalidateResults(statusMessageOverride: friendlyLoadErrorMessage(for: error))
             }
         }
     }
@@ -278,6 +315,12 @@ final class AppState: ObservableObject {
         // Move run identifier forward so stale background work cannot publish.
         activeAnalyzeRunID = UUID()
         isAnalyzing = false
+    }
+
+    private func cancelFileLoadIfRunning() {
+        fileLoadTask?.cancel()
+        fileLoadTask = nil
+        activeFileLoadRunID = UUID()
     }
 
     private func fileSizeInBytes(for url: URL) -> Int? {
