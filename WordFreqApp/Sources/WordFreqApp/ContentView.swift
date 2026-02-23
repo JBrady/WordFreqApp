@@ -456,6 +456,10 @@ private struct OptionsCard: View {
 
 private struct ResultsCard: View {
     @ObservedObject var appState: AppState
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    @State private var didJustAnalyze = false
+    @State private var wasStale = true
     
     private enum ContentState {
         case noFileSelected
@@ -530,8 +534,16 @@ private struct ResultsCard: View {
             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             .overlay {
                 RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .stroke(Color.white.opacity(0.22), lineWidth: 1)
+                    .stroke(
+                        Color.white.opacity(didJustAnalyze ? 0.42 : 0.22),
+                        lineWidth: didJustAnalyze ? 1.4 : 1.0
+                    )
+                    .shadow(
+                        color: AppTheme.focusGlow.opacity(didJustAnalyze ? 0.24 : 0.0),
+                        radius: didJustAnalyze ? 8 : 0
+                    )
             }
+            .scaleEffect(didJustAnalyze && !reduceMotion ? 1.001 : 1.0)
 
             Text(appState.resultsStale ? "Press Analyze to update results." : appState.statusMessage)
                 .font(.caption)
@@ -540,6 +552,28 @@ private struct ResultsCard: View {
         }
         .padding(AppTheme.cardPadding)
         .glassCardStyle()
+        .onAppear {
+            wasStale = appState.resultsStale
+        }
+        .onChange(of: appState.resultsStale) { isStale in
+            if wasStale, !isStale, appState.statusMessage.hasPrefix("Analysis complete.") {
+                triggerAnalyzeCompletionAnimation()
+            }
+            wasStale = isStale
+        }
+    }
+
+    private func triggerAnalyzeCompletionAnimation() {
+        guard !reduceMotion else { return }
+
+        withAnimation(.easeOut(duration: 0.18)) {
+            didJustAnalyze = true
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.32) {
+            withAnimation(.easeOut(duration: 0.16)) {
+                didJustAnalyze = false
+            }
+        }
     }
 }
 
