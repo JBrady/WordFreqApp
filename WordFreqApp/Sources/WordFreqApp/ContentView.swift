@@ -114,6 +114,7 @@ struct ContentView: View {
             modality.start()
         }
         .onDisappear {
+            appState.cancelAnalysisIfRunning()
             modality.stop()
         }
         .onChange(of: appState.statusMessage) { message in
@@ -331,7 +332,7 @@ private struct OptionsCard: View {
                 .font(.system(.title3, design: .rounded).weight(.bold))
 
             HStack(spacing: 10) {
-                Button("Analyze") {
+                Button(appState.isAnalyzing ? "Analyzing…" : "Analyze") {
                     appState.analyze()
                 }
                 .buttonStyle(
@@ -343,7 +344,7 @@ private struct OptionsCard: View {
                 .disableSystemFocusEffectIfAvailable()
                 .focused(focusedAction, equals: .analyze)
                 .keyboardShortcut(.return, modifiers: [.command])
-                .disabled(appState.selectedFileURL == nil)
+                .disabled(appState.selectedFileURL == nil || appState.isAnalyzing)
 
                 Button("Export CSV") {
                     appState.exportCSV()
@@ -356,7 +357,7 @@ private struct OptionsCard: View {
                 )
                 .disableSystemFocusEffectIfAvailable()
                 .focused(focusedAction, equals: .export)
-                .disabled(appState.results.isEmpty || appState.resultsStale)
+                .disabled(appState.results.isEmpty || appState.resultsStale || appState.isAnalyzing)
 
                 Spacer(minLength: 0)
             }
@@ -545,7 +546,7 @@ private struct ResultsCard: View {
             }
             .scaleEffect(didJustAnalyze && !reduceMotion ? 1.001 : 1.0)
 
-            Text(appState.resultsStale ? "Press Analyze to update results." : appState.statusMessage)
+            Text(footerText)
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .lineLimit(2)
@@ -561,6 +562,16 @@ private struct ResultsCard: View {
             }
             wasStale = isStale
         }
+    }
+
+    private var footerText: String {
+        if appState.isAnalyzing {
+            return "Analyzing…"
+        }
+        if appState.resultsStale {
+            return "Press Analyze to update results."
+        }
+        return appState.statusMessage
     }
 
     private func triggerAnalyzeCompletionAnimation() {

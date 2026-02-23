@@ -11,11 +11,12 @@ enum CSVExporter {
         }
 
         let csv = lines.joined(separator: "\n")
-        try csv.write(to: url, atomically: true, encoding: .utf8)
+        let data = Data(csv.utf8)
+        try data.write(to: url, options: .atomic)
     }
 
     private static func escape(_ value: String) -> String {
-        if value.contains(",") || value.contains("\"") || value.contains("\n") {
+        if value.contains(",") || value.contains("\"") || value.contains("\n") || value.contains("\r") {
             return "\"\(value.replacingOccurrences(of: "\"", with: "\"\""))\""
         }
         return value
