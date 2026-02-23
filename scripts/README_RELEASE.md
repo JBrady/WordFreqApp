@@ -1,8 +1,29 @@
 # Release Packaging
 
+## Quick Commands
+
+Build + open DMG:
+
+```bash
+./scripts/make_dmg.sh && open .build/WordFreqApp.dmg
+```
+
+Verify DMG:
+
+```bash
+./scripts/verify_dmg_layout.sh
+```
+
+Notarize + staple (use existing script):
+
+```bash
+./scripts/notarize.sh --file ./.build/WordFreqApp.dmg --profile AC_PROFILE
+```
+
 ## Build + Notarize
 
 ```bash
+./scripts/install_packaging_deps.sh
 ./scripts/build_release.sh
 ./scripts/notarize.sh --file ./.build/release/WordFreqApp/WordFreqApp.app --profile AC_PROFILE
 ./scripts/make_dmg.sh ./.build/release/WordFreqApp/WordFreqApp.app ./.build/WordFreqApp.dmg
@@ -28,21 +49,19 @@ DMG_VOL_NAME="WordFreqApp" ./scripts/make_dmg.sh ./.build/release/WordFreqApp/Wo
 
 ## DMG Layout Tuning
 
-`make_dmg.sh` supports deterministic layout tuning via env vars:
+`make_dmg.sh` now uses `dmgbuild` (no Finder scripting) and supports deterministic layout tuning via env vars:
 
-- `DMG_CANVAS_W` / `DMG_CANVAS_H` (background image is resized to these exact pixels)
-- `DMG_CHROME_W` / `DMG_CHROME_H` (Finder chrome padding added to window bounds)
-- `DMG_ICON_SIZE`
-- `DMG_APP_POS_X` / `DMG_APP_POS_Y`
-- `DMG_APPS_POS_X` / `DMG_APPS_POS_Y`
+- `DMG_WIN_X` / `DMG_WIN_Y` / `DMG_WIN_W` / `DMG_WIN_H`
+- `DMG_ICON_SIZE` / `DMG_TEXT_SIZE`
+- `DMG_APP_X` / `DMG_APP_Y` / `DMG_APPS_X` / `DMG_APPS_Y`
+- `DMG_BACKGROUND_MODE=none` (backgrounds disabled)
 
 Example:
 
 ```bash
-DMG_CANVAS_W=640 DMG_CANVAS_H=400 \
-DMG_CHROME_W=100 DMG_CHROME_H=100 \
-DMG_APP_POS_X=192 DMG_APP_POS_Y=338 \
-DMG_APPS_POS_X=480 DMG_APPS_POS_Y=338 \
+DMG_WIN_W=820 DMG_WIN_H=520 \
+DMG_APP_X=260 DMG_APP_Y=280 \
+DMG_APPS_X=540 DMG_APPS_Y=280 \
 ./scripts/make_dmg.sh ./.build/release/WordFreqApp/WordFreqApp.app ./.build/WordFreqApp.dmg
 ```
 
