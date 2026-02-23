@@ -2,8 +2,11 @@ import SwiftUI
 
 struct PrimaryButtonStyle: ButtonStyle {
     var isFocused: Bool = false
+    var showKeyboardFocus: Bool = false
 
     func makeBody(configuration: Configuration) -> some View {
+        let showFocus = isFocused && showKeyboardFocus
+
         configuration.label
             .font(.headline.weight(.semibold))
             .foregroundStyle(Color.white)
@@ -26,11 +29,11 @@ struct PrimaryButtonStyle: ButtonStyle {
             .shadow(color: Color.black.opacity(0.14), radius: 3, y: 1)
             .overlay {
                 RoundedRectangle(cornerRadius: AppTheme.buttonCornerRadius, style: .continuous)
-                    .stroke(AppTheme.focusGlow.opacity(isFocused ? 0.85 : 0.0), lineWidth: 1.5)
+                    .stroke(AppTheme.focusGlow.opacity(showFocus ? 0.85 : 0.0), lineWidth: 1.5)
             }
-            .shadow(color: AppTheme.focusGlow.opacity(isFocused ? 0.45 : 0.0), radius: 8, y: 0)
+            .shadow(color: AppTheme.focusGlow.opacity(showFocus ? 0.45 : 0.0), radius: 8, y: 0)
             .scaleEffect(configuration.isPressed ? 0.995 : 1.0)
             .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
-            .animation(.easeOut(duration: 0.14), value: isFocused)
+            .animation(.easeOut(duration: 0.14), value: showFocus)
     }
 }

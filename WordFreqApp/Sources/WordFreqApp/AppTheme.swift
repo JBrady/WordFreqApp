@@ -58,4 +58,12 @@ enum AppTheme {
     static var success: Color {
         Color(nsColor: .init(red: 0.16, green: 0.64, blue: 0.36, alpha: 1.0))
     }
+
+    static func inputBackground(for colorScheme: ColorScheme) -> Color {
+        if colorScheme == .dark {
+            return Color.black.opacity(0.30)
+        } else {
+            return Color.black.opacity(0.12)
+        }
+    }
 }

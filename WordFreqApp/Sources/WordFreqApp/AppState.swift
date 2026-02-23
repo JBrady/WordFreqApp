@@ -7,6 +7,7 @@ final class AppState: ObservableObject {
     @Published var selectedFileURL: URL?
     @Published var options = AnalysisOptions()
     @Published var results: [WordCount] = []
+    @Published var resultsStale = true
     @Published var searchText = ""
     @Published var statusMessage = "Choose a .txt play file and click Analyze."
     @Published var additionalStopwordsText = ""
@@ -17,6 +18,8 @@ final class AppState: ObservableObject {
     @Published var debugBuiltInIgnoredCount: Int = 0
     @Published var debugAdditionalIgnoredCount: Int = 0
     @Published var debugMergedIgnoredCount: Int = 0
+    @Published var previewCompact: String = ""
+    @Published var previewFull: String = ""
     @Published var debugPreview: String = ""
     @Published var debugSampleTokens: [String] = []
 
@@ -66,18 +69,15 @@ final class AppState: ObservableObject {
                     builtIn: builtInStopwordsSet,
                     additionalRawText: additionalStopwordsText
                 ).count
-
-                let base = "Selected: \(url.lastPathComponent)"
-                if let warning = nonLatinWarning(for: text, allowNonLatin: options.allowNonLatinLetters) {
-                    statusMessage = "\(base). \(warning)"
-                } else {
-                    statusMessage = base
-                }
+                invalidateResults()
             } catch {
                 debugLoadedChars = 0
+                previewCompact = ""
+                previewFull = ""
                 debugPreview = ""
                 debugTokenCount = 0
                 debugSampleTokens = []
+                resultsStale = true
                 statusMessage = error.localizedDescription
             }
         }
@@ -114,13 +114,16 @@ final class AppState: ObservableObject {
             debugMergedIgnoredCount = stopwords.count
 
             results = Analyzer.analyze(text: text, stopwords: stopwords, options: clampedOptions)
+            resultsStale = false
+            let resultLabel = clampedOptions.includeNumbers ? "words and numbers" : "words"
             if let warning = nonLatinWarning(for: text, allowNonLatin: clampedOptions.allowNonLatinLetters) {
-                statusMessage = "Analysis complete. Found \(results.count) words. \(warning)"
+                statusMessage = "Analysis complete. Found \(results.count) \(resultLabel). \(warning)"
             } else {
-                statusMessage = "Analysis complete. Found \(results.count) words."
+                statusMessage = "Analysis complete. Found \(results.count) \(resultLabel)."
             }
         } catch {
             results = []
+            resultsStale = true
             statusMessage = error.localizedDescription
 
             debugLoadedChars = 0
@@ -128,18 +131,15 @@ final class AppState: ObservableObject {
             debugBuiltInIgnoredCount = builtInStopwordsSet.count
             debugAdditionalIgnoredCount = 0
             debugMergedIgnoredCount = 0
+            previewCompact = ""
+            previewFull = ""
             debugPreview = ""
             debugSampleTokens = []
         }
     }
 
-    func reanalyzeIfPossible() {
-        guard selectedFileURL != nil else { return }
-        analyze()
-    }
-
     func exportCSV() {
-        guard !results.isEmpty else {
+        guard !results.isEmpty, !resultsStale else {
             statusMessage = "No results to export."
             return
         }
@@ -166,6 +166,12 @@ final class AppState: ObservableObject {
         options.minWordLength = value.clamped(to: Self.minLengthRange)
     }
 
+    func invalidateResults(reason _: String? = nil) {
+        results = []
+        resultsStale = true
+        statusMessage = "Press Analyze to update results."
+    }
+
     var clampedOptions: AnalysisOptions {
         var copy = options
         copy.topN = copy.topN.clamped(to: Self.topNRange)
@@ -187,7 +193,24 @@ final class AppState: ObservableObject {
 
     private func updatePreview(with text: String) {
         debugLoadedChars = text.count
+        previewCompact = makePreview(
+            from: text,
+            linesCap: 10,
+            charCap: 4_000
+        )
+        previewFull = makePreview(
+            from: text,
+            linesCap: 26,
+            charCap: 12_000
+        )
         debugPreview = String(text.prefix(300))
+    }
+
+    private func makePreview(from text: String, linesCap: Int, charCap: Int) -> String {
+        let lines = text.split(separator: "\n", omittingEmptySubsequences: false)
+        let joined = lines.prefix(linesCap).joined(separator: "\n")
+        guard joined.count > charCap else { return joined }
+        return String(joined.prefix(charCap))
     }
 
     private func nonLatinWarning(for text: String, allowNonLatin: Bool) -> String? {

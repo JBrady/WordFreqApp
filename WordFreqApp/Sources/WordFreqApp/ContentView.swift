@@ -11,6 +11,7 @@ struct ContentView: View {
     @EnvironmentObject private var appState: AppState
     @Environment(\.colorScheme) private var colorScheme
 
+    @StateObject private var modality = InputModality()
     @State private var didConfigureWindow = false
     @State private var showExportToast = false
     @State private var showDebugSheet = false
@@ -24,7 +25,7 @@ struct ContentView: View {
             get: { appState.options.topN },
             set: {
                 appState.setTopN($0)
-                appState.reanalyzeIfPossible()
+                appState.invalidateResults()
             }
         )
     }
@@ -34,7 +35,7 @@ struct ContentView: View {
             get: { appState.options.minWordLength },
             set: {
                 appState.setMinWordLength($0)
-                appState.reanalyzeIfPossible()
+                appState.invalidateResults()
             }
         )
     }
@@ -56,7 +57,8 @@ struct ContentView: View {
                                 minWordLengthBinding: minWordLengthBinding,
                                 autoIgnoredInlineText: autoIgnoredInlineText,
                                 showFullPreview: $showFullPreview,
-                                focusedAction: $focusedAction
+                                focusedAction: $focusedAction,
+                                modality: modality
                             )
                         } else {
                             NarrowLayout(
@@ -65,7 +67,8 @@ struct ContentView: View {
                                 minWordLengthBinding: minWordLengthBinding,
                                 autoIgnoredInlineText: autoIgnoredInlineText,
                                 showFullPreview: $showFullPreview,
-                                focusedAction: $focusedAction
+                                focusedAction: $focusedAction,
+                                modality: modality
                             )
                         }
                     }
@@ -106,7 +109,13 @@ struct ContentView: View {
         .sheet(isPresented: $showDebugSheet) {
             DebugView(appState: appState)
         }
-        .onAppear(perform: configureWindowIfNeeded)
+        .onAppear {
+            configureWindowIfNeeded()
+            modality.start()
+        }
+        .onDisappear {
+            modality.stop()
+        }
         .onChange(of: appState.statusMessage) { message in
             guard message.hasPrefix("Exported CSV to") else { return }
             showExportToast = true
@@ -159,6 +168,7 @@ private struct WideLayout: View {
     let autoIgnoredInlineText: String
     @Binding var showFullPreview: Bool
     let focusedAction: FocusState<ActionFocus?>.Binding
+    @ObservedObject var modality: InputModality
 
     var body: some View {
         HStack(alignment: .top, spacing: AppTheme.paneGap) {
@@ -166,7 +176,8 @@ private struct WideLayout: View {
                 LeftPane(
                     appState: appState,
                     showFullPreview: $showFullPreview,
-                    focusedAction: focusedAction
+                    focusedAction: focusedAction,
+                    modality: modality
                 )
 
                 OptionsCard(
@@ -175,6 +186,7 @@ private struct WideLayout: View {
                     minWordLengthBinding: minWordLengthBinding,
                     autoIgnoredInlineText: autoIgnoredInlineText,
                     focusedAction: focusedAction,
+                    modality: modality,
                     fillsHeight: true
                 )
                 .frame(maxHeight: .infinity)
@@ -195,13 +207,15 @@ private struct NarrowLayout: View {
     let autoIgnoredInlineText: String
     @Binding var showFullPreview: Bool
     let focusedAction: FocusState<ActionFocus?>.Binding
+    @ObservedObject var modality: InputModality
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             LeftPane(
                 appState: appState,
                 showFullPreview: $showFullPreview,
-                focusedAction: focusedAction
+                focusedAction: focusedAction,
+                modality: modality
             )
 
             ResultsCard(appState: appState)
@@ -213,6 +227,7 @@ private struct NarrowLayout: View {
                 minWordLengthBinding: minWordLengthBinding,
                 autoIgnoredInlineText: autoIgnoredInlineText,
                 focusedAction: focusedAction,
+                modality: modality,
                 fillsHeight: false
             )
         }
@@ -223,6 +238,7 @@ private struct LeftPane: View {
     @ObservedObject var appState: AppState
     @Binding var showFullPreview: Bool
     let focusedAction: FocusState<ActionFocus?>.Binding
+    @ObservedObject var modality: InputModality
 
     private var previewHeight: CGFloat {
         showFullPreview ? 360 : 160
@@ -239,8 +255,13 @@ private struct LeftPane: View {
                 } label: {
                     Text("Choose File…")
                 }
-                .buttonStyle(PrimaryButtonStyle(isFocused: focusedAction.wrappedValue == .chooseFile))
-                .focusable(true)
+                .buttonStyle(
+                    PrimaryButtonStyle(
+                        isFocused: focusedAction.wrappedValue == .chooseFile,
+                        showKeyboardFocus: modality.lastWasKeyboard
+                    )
+                )
+                .disableSystemFocusEffectIfAvailable()
                 .focused(focusedAction, equals: .chooseFile)
 
                 Text(appState.selectedFilePath)
@@ -249,6 +270,13 @@ private struct LeftPane: View {
                     .lineLimit(1)
                     .truncationMode(.middle)
             }
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Accepts plain text files (.txt) only.")
+                Text("Export from Google Docs as: File → Download → Plain Text (.txt)")
+            }
+            .font(.caption)
+            .foregroundStyle(.secondary)
 
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
@@ -266,7 +294,8 @@ private struct LeftPane: View {
                 }
 
                 ScrollView(.vertical, showsIndicators: true) {
-                    Text(appState.debugPreview.isEmpty ? "No text loaded yet." : appState.debugPreview)
+                    let preview = showFullPreview ? appState.previewFull : appState.previewCompact
+                    Text(preview.isEmpty ? "No text loaded yet." : preview)
                         .font(.system(.footnote, design: .monospaced))
                         .textSelection(.enabled)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -291,7 +320,10 @@ private struct OptionsCard: View {
     let minWordLengthBinding: Binding<Int>
     let autoIgnoredInlineText: String
     let focusedAction: FocusState<ActionFocus?>.Binding
+    @ObservedObject var modality: InputModality
     let fillsHeight: Bool
+    @FocusState private var isFilterFocused: Bool
+    @FocusState private var isIgnoreWordsFocused: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -302,52 +334,77 @@ private struct OptionsCard: View {
                 Button("Analyze") {
                     appState.analyze()
                 }
-                .buttonStyle(PrimaryButtonStyle(isFocused: focusedAction.wrappedValue == .analyze))
-                .focusable(true)
+                .buttonStyle(
+                    PrimaryButtonStyle(
+                        isFocused: focusedAction.wrappedValue == .analyze,
+                        showKeyboardFocus: modality.lastWasKeyboard
+                    )
+                )
+                .disableSystemFocusEffectIfAvailable()
                 .focused(focusedAction, equals: .analyze)
-                .keyboardShortcut(.return)
+                .keyboardShortcut(.return, modifiers: [.command])
                 .disabled(appState.selectedFileURL == nil)
 
                 Button("Export CSV") {
                     appState.exportCSV()
                 }
-                .buttonStyle(PrimaryButtonStyle(isFocused: focusedAction.wrappedValue == .export))
-                .focusable(true)
+                .buttonStyle(
+                    PrimaryButtonStyle(
+                        isFocused: focusedAction.wrappedValue == .export,
+                        showKeyboardFocus: modality.lastWasKeyboard
+                    )
+                )
+                .disableSystemFocusEffectIfAvailable()
                 .focused(focusedAction, equals: .export)
-                .disabled(appState.results.isEmpty)
+                .disabled(appState.results.isEmpty || appState.resultsStale)
 
                 Spacer(minLength: 0)
             }
 
-            HStack(spacing: 18) {
-                NumericStepperField(
-                    title: "Top N",
-                    value: topNBinding,
-                    range: AppState.topNRange,
-                    fieldWidth: 86
-                )
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(spacing: 12) {
+                    Text("Number of words to show")
+                        .lineLimit(1)
 
-                NumericStepperField(
-                    title: "Min Length",
-                    value: minWordLengthBinding,
-                    range: AppState.minLengthRange,
-                    fieldWidth: 62
-                )
+                    Spacer(minLength: 8)
+
+                    NumericStepperField(
+                        value: topNBinding,
+                        range: AppState.topNRange,
+                        fieldWidth: 86
+                    )
+                }
+
+                HStack(spacing: 12) {
+                    Text("Minimum word length")
+                        .lineLimit(1)
+
+                    Spacer(minLength: 8)
+
+                    NumericStepperField(
+                        value: minWordLengthBinding,
+                        range: AppState.minLengthRange,
+                        fieldWidth: 62
+                    )
+                }
             }
 
-            Toggle("Keep internal apostrophes", isOn: $appState.options.keepInternalApostrophes)
+            Toggle("Treat contractions as single words", isOn: $appState.options.keepInternalApostrophes)
+                .toggleStyle(OptionCheckboxToggleStyle())
                 .onChange(of: appState.options.keepInternalApostrophes) { _ in
-                    appState.reanalyzeIfPossible()
+                    appState.invalidateResults()
                 }
 
             Toggle("Include numbers", isOn: $appState.options.includeNumbers)
+                .toggleStyle(OptionCheckboxToggleStyle())
                 .onChange(of: appState.options.includeNumbers) { _ in
-                    appState.reanalyzeIfPossible()
+                    appState.invalidateResults()
                 }
 
-            Toggle("Allow non-Latin letters", isOn: $appState.options.allowNonLatinLetters)
+            Toggle("Allow non-Latin characters", isOn: $appState.options.allowNonLatinLetters)
+                .toggleStyle(OptionCheckboxToggleStyle())
                 .onChange(of: appState.options.allowNonLatinLetters) { _ in
-                    appState.reanalyzeIfPossible()
+                    appState.invalidateResults()
                 }
 
             VStack(alignment: .leading, spacing: 6) {
@@ -355,9 +412,11 @@ private struct OptionsCard: View {
                     .font(.subheadline.weight(.semibold))
 
                 TextField("Filter visible words", text: $appState.searchText)
-                    .textFieldStyle(.roundedBorder)
+                    .textFieldStyle(.plain)
+                    .focused($isFilterFocused)
+                    .inputSurface(focused: isFilterFocused)
 
-                Text("Filters visible results only (does not affect analysis).")
+                Text("Filters visible results only. Does not affect analysis")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -367,20 +426,17 @@ private struct OptionsCard: View {
                 .foregroundStyle(.secondary)
 
             VStack(alignment: .leading, spacing: 6) {
-                Text("Additional Words to Ignore (one per line)")
+                Text("Additional words to ignore (one per line)")
                     .font(.subheadline.weight(.semibold))
 
                 TextEditor(text: $appState.additionalStopwordsText)
                     .font(.system(.body, design: .monospaced))
+                    .focused($isIgnoreWordsFocused)
+                    .scrollContentBackground(.hidden)
                     .frame(minHeight: 90, maxHeight: 120)
-                    .padding(4)
-                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 10, style: .continuous))
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .stroke(Color.white.opacity(0.25), lineWidth: 1)
-                    }
+                    .inputSurface(cornerRadius: 10, focused: isIgnoreWordsFocused)
                     .onChange(of: appState.additionalStopwordsText) { _ in
-                        appState.reanalyzeIfPossible()
+                        appState.invalidateResults()
                     }
 
                 Text("Lines are trimmed, lowercased, and merged with default ignored words. Empty lines and lines starting with # are ignored.")
@@ -407,18 +463,29 @@ private struct ResultsCard: View {
                 .font(.system(.title3, design: .rounded).weight(.bold))
 
             VStack(spacing: 0) {
-                Table(appState.filteredResults) {
-                    TableColumn("Word", value: \.word)
-                        .width(min: 220)
-
-                    TableColumn("Count") { row in
-                        Text("\(row.count)")
-                            .frame(maxWidth: .infinity, alignment: .trailing)
+                if appState.resultsStale {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Press Analyze to update results.")
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(.secondary)
                     }
-                    .width(min: 100, max: 120)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                    .padding(14)
+                    .background(.regularMaterial)
+                } else {
+                    Table(appState.filteredResults) {
+                        TableColumn("Word", value: \.word)
+                            .width(min: 220)
+
+                        TableColumn("Count") { row in
+                            Text("\(row.count)")
+                                .frame(maxWidth: .infinity, alignment: .trailing)
+                        }
+                        .width(min: 100, max: 120)
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(.regularMaterial)
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .background(.regularMaterial)
             }
             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             .overlay {
@@ -426,7 +493,7 @@ private struct ResultsCard: View {
                     .stroke(Color.white.opacity(0.22), lineWidth: 1)
             }
 
-            Text(appState.statusMessage)
+            Text(appState.resultsStale ? "Press Analyze to update results." : appState.statusMessage)
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .lineLimit(2)
@@ -437,21 +504,22 @@ private struct ResultsCard: View {
 }
 
 private struct NumericStepperField: View {
-    let title: String
     @Binding var value: Int
     let range: ClosedRange<Int>
     let fieldWidth: CGFloat
+    var controlClusterWidth: CGFloat = 156
 
     @State private var text: String = ""
+    @FocusState private var isFieldFocused: Bool
 
     var body: some View {
         HStack(spacing: 8) {
-            Text(title)
-
-            TextField(title, text: $text)
+            TextField("", text: $text)
                 .frame(width: fieldWidth)
-                .textFieldStyle(.roundedBorder)
+                .textFieldStyle(.plain)
+                .focused($isFieldFocused)
                 .multilineTextAlignment(.trailing)
+                .inputSurface(focused: isFieldFocused)
                 .onSubmit(commitText)
                 .onChange(of: text) { newValue in
                     applyTextInput(newValue)
@@ -460,6 +528,7 @@ private struct NumericStepperField: View {
             Stepper("", value: $value, in: range)
                 .labelsHidden()
         }
+        .frame(width: controlClusterWidth, alignment: .trailing)
         .onAppear {
             text = "\(value.clamped(to: range))"
         }
@@ -507,5 +576,83 @@ private struct NumericStepperField: View {
         let clamped = parsed.clamped(to: range)
         value = clamped
         text = "\(clamped)"
+    }
+}
+
+private struct OptionCheckboxToggleStyle: ToggleStyle {
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.isEnabled) private var isEnabled
+
+    func makeBody(configuration: Configuration) -> some View {
+        Button {
+            configuration.isOn.toggle()
+        } label: {
+            HStack(spacing: 10) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 5, style: .continuous)
+                        .fill(AppTheme.inputBackground(for: colorScheme))
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 5, style: .continuous)
+                                .stroke(
+                                    Color.white.opacity(configuration.isOn ? 0.62 : 0.46),
+                                    lineWidth: 1.2
+                                )
+                        }
+                        .frame(width: 18, height: 18)
+
+                    if configuration.isOn {
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundStyle(.white.opacity(0.95))
+                    }
+                }
+
+                configuration.label
+                    .foregroundStyle(.primary)
+
+                Spacer(minLength: 0)
+            }
+            .opacity(isEnabled ? 1.0 : 0.55)
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+private struct InputSurfaceModifier: ViewModifier {
+    @Environment(\.colorScheme) private var colorScheme
+
+    let cornerRadius: CGFloat
+    let focused: Bool
+
+    func body(content: Content) -> some View {
+        content
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .fill(AppTheme.inputBackground(for: colorScheme))
+            )
+            .overlay {
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                    .stroke(
+                        Color.white.opacity(focused ? 0.52 : 0.40),
+                        lineWidth: focused ? 1.2 : 1.0
+                    )
+            }
+    }
+}
+
+private extension View {
+    func inputSurface(cornerRadius: CGFloat = 8, focused: Bool = false) -> some View {
+        modifier(InputSurfaceModifier(cornerRadius: cornerRadius, focused: focused))
+    }
+
+    @ViewBuilder
+    func disableSystemFocusEffectIfAvailable() -> some View {
+        if #available(macOS 14.0, *) {
+            self.focusEffectDisabled(true)
+        } else {
+            self
+        }
     }
 }
