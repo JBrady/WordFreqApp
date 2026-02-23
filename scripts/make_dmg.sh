@@ -17,9 +17,7 @@ MOUNT_POINT="$TMP_DIR/mount"
 VOL_NAME="WordFreqApp"
 
 cleanup() {
-  if mount | rg -q "$MOUNT_POINT"; then
-    hdiutil detach "$MOUNT_POINT" -quiet || true
-  fi
+  hdiutil detach "$MOUNT_POINT" -quiet 2>/dev/null || true
   rm -rf "$TMP_DIR"
 }
 trap cleanup EXIT
@@ -40,8 +38,14 @@ mkdir -p "$MOUNT_POINT"
 hdiutil attach "$RW_DMG" -mountpoint "$MOUNT_POINT" -quiet
 
 echo "==> Populating DMG"
-cp -R "$APP_PATH" "$MOUNT_POINT/"
+ditto --rsrc --extattr "$APP_PATH" "$MOUNT_POINT/WordFreqApp.app"
 ln -s /Applications "$MOUNT_POINT/Applications"
+
+echo "==> Verifying copied app code signature"
+codesign -vvv --deep --strict "$MOUNT_POINT/WordFreqApp.app"
+
+echo "==> Checking stapled ticket on copied app (non-fatal)"
+xcrun stapler validate "$MOUNT_POINT/WordFreqApp.app" || true
 
 sync
 hdiutil detach "$MOUNT_POINT" -quiet
