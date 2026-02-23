@@ -134,7 +134,16 @@ else
       set position of item "WordFreqApp.app" of cw to {180, 250}
       set position of item "Applications" of cw to {480, 250}
       if exists item "README.txt" of cw then
-        set position of item "README.txt" of cw to {180, 390}
+        set position of item "README.txt" of cw to {180, 360}
+      end if
+      if exists item ".background" of cw then
+        set position of item ".background" of cw to {900, 900}
+      end if
+      if exists item ".fseventsd" of cw then
+        set position of item ".fseventsd" of cw to {960, 900}
+      end if
+      if exists item ".Trashes" of cw then
+        set position of item ".Trashes" of cw to {1020, 900}
       end if
       try
         update without registering applications
@@ -150,6 +159,7 @@ else
     end tell
   end tell
 EOF2
+  )"
   then
     echo "WARNING: Finder layout configuration failed; continuing without custom layout." >&2
     if [[ -s "$APPLESCRIPT_LOG" ]]; then

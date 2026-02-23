@@ -78,7 +78,7 @@ tell application "Finder"
     try
       set bgPicture to background picture of vo as text
     on error
-      return "<not set>"
+      set bgPicture to "<not set>"
     end try
     set appPos to position of item "WordFreqApp.app" of cw
     set appsPos to position of item "Applications" of cw
