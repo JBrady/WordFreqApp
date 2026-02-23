@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0D882550E22E3A03CFA86D61 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7A7C1AB1C24C154FAB2B52AC /* Assets.xcassets */; };
 		1CB53721356F9965318D1CBE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69AC33E5FEA65061B31E4CDC /* ContentView.swift */; };
 		1F1CCBDB23762B8A48F40A6D /* Analyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E506B5863E4C59D76C9EB4B /* Analyzer.swift */; };
 		1F6E82DCE80F58A8CC53DE16 /* CSVExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A61468F5686430D95B294AA /* CSVExporter.swift */; };
@@ -49,6 +50,7 @@
 		5732FDEDF69059C40A51AEEF /* Normalizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Normalizer.swift; sourceTree = "<group>"; };
 		68733AAFC04B6A9631B54EDE /* InputModality.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputModality.swift; sourceTree = "<group>"; };
 		69AC33E5FEA65061B31E4CDC /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		7A7C1AB1C24C154FAB2B52AC /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7CDF4CE047455B808B2148E0 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		82CD92813DAF0E97C80496F1 /* TextLoaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextLoaderTests.swift; sourceTree = "<group>"; };
 		88A332B28A28E886FAA78C48 /* PrimaryButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButtonStyle.swift; sourceTree = "<group>"; };
@@ -118,6 +120,7 @@
 		F5C9D9F1EDC200547069EC25 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				7A7C1AB1C24C154FAB2B52AC /* Assets.xcassets */,
 				8AC1B7CA5912C82DDF226494 /* stopwords_en.txt */,
 			);
 			name = Resources;
@@ -206,6 +209,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0D882550E22E3A03CFA86D61 /* Assets.xcassets in Resources */,
 				A71083991BFD81D3A47CA782 /* stopwords_en.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -265,6 +269,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = WordFreqApp;
+				INFOPLIST_KEY_CFBundleIconName = AppIcon;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -290,6 +295,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = WordFreqApp;
+				INFOPLIST_KEY_CFBundleIconName = AppIcon;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
