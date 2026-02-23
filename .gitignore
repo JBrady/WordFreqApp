@@ -2,6 +2,10 @@
 build/
 .build/
 DerivedData/
+*.dSYM/
 *.xcuserstate
+xcuserdata/
 *.xcworkspace/xcuserdata/
 *.xcodeproj/xcuserdata/
+*.app
+*.dmg

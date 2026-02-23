@@ -4,78 +4,80 @@ set -euo pipefail
 usage() {
   cat <<USAGE
 Usage:
-  $0 --app /path/to/WordFreqApp.app --keychain-profile PROFILE [--dmg]
+  $0 --file <path-to-app-or-dmg> [--profile AC_PROFILE]
 
-Required:
-  --app               Path to signed .app bundle
-  --keychain-profile  notarytool keychain profile name
-
-Optional:
-  --dmg               Build DMG after stapling app
+Examples:
+  $0 --file ./.build/release/WordFreqApp/WordFreqApp.app
+  $0 --file ./.build/WordFreqApp.dmg --profile AC_PROFILE
 USAGE
 }
 
-APP_PATH=""
-PROFILE=""
-BUILD_DMG="false"
+FILE_PATH=""
+PROFILE="${NOTARY_PROFILE:-AC_PROFILE}"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --app)
-      APP_PATH="$2"
+    --file)
+      FILE_PATH="$2"
       shift 2
       ;;
-    --keychain-profile)
+    --profile)
       PROFILE="$2"
       shift 2
-      ;;
-    --dmg)
-      BUILD_DMG="true"
-      shift
       ;;
     -h|--help)
       usage
       exit 0
       ;;
     *)
-      echo "Unknown argument: $1"
+      echo "Unknown argument: $1" >&2
       usage
       exit 1
       ;;
   esac
 done
 
-if [[ -z "$APP_PATH" || -z "$PROFILE" ]]; then
+if [[ -z "$FILE_PATH" ]]; then
   usage
   exit 1
 fi
 
-if [[ ! -d "$APP_PATH" ]]; then
-  echo "App not found: $APP_PATH"
+if [[ ! -e "$FILE_PATH" ]]; then
+  echo "File not found: $FILE_PATH" >&2
   exit 1
 fi
 
-APP_BASENAME="$(basename "$APP_PATH" .app)"
-WORK_DIR="$(mktemp -d)"
-ZIP_PATH="$WORK_DIR/${APP_BASENAME}.zip"
+if ! xcrun notarytool history --keychain-profile "$PROFILE" >/dev/null 2>&1; then
+  cat <<INSTRUCTIONS >&2
+Missing notarytool keychain profile: $PROFILE
+Create it with:
+  xcrun notarytool store-credentials "$PROFILE" --apple-id "<APPLE_ID>" --team-id "<TEAM_ID>" --password "<APP_SPECIFIC_PASSWORD>"
+INSTRUCTIONS
+  exit 1
+fi
 
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+TMP_DIR="$(mktemp -d)"
 cleanup() {
-  rm -rf "$WORK_DIR"
+  rm -rf "$TMP_DIR"
 }
 trap cleanup EXIT
 
-echo "Zipping app..."
-ditto -c -k --keepParent "$APP_PATH" "$ZIP_PATH"
-
-echo "Submitting to notarization..."
-xcrun notarytool submit "$ZIP_PATH" --keychain-profile "$PROFILE" --wait
-
-echo "Stapling ticket to app..."
-xcrun stapler staple "$APP_PATH"
-
-echo "Notarization and stapling complete for: $APP_PATH"
-
-if [[ "$BUILD_DMG" == "true" ]]; then
-  SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-  "$SCRIPT_DIR/dmg.sh" "$APP_PATH" "${APP_BASENAME}.dmg"
+SUBMIT_PATH="$FILE_PATH"
+if [[ -d "$FILE_PATH" && "${FILE_PATH##*.}" == "app" ]]; then
+  APP_BASENAME="$(basename "$FILE_PATH" .app)"
+  SUBMIT_PATH="$TMP_DIR/${APP_BASENAME}.zip"
+  echo "==> Zipping app for notarization"
+  ditto -c -k --keepParent "$FILE_PATH" "$SUBMIT_PATH"
 fi
+
+echo "==> Submitting to notarytool"
+xcrun notarytool submit "$SUBMIT_PATH" --keychain-profile "$PROFILE" --wait
+
+echo "==> Stapling"
+xcrun stapler staple "$FILE_PATH"
+
+echo "==> Validating staple"
+xcrun stapler validate "$FILE_PATH"
+
+echo "Notarization complete: $FILE_PATH"

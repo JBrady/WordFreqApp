@@ -4,6 +4,7 @@ options:
 settings:
   base:
     PRODUCT_BUNDLE_IDENTIFIER: com.example.WordFreqApp
+    DEVELOPMENT_TEAM: Z9D957576J
     SWIFT_VERSION: 5.9
     MACOSX_DEPLOYMENT_TARGET: 13.0
     CODE_SIGN_STYLE: Automatic
@@ -20,6 +21,7 @@ targets:
         buildPhase: resources
     settings:
       base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.johnbrady.WordFreq
         PRODUCT_NAME: WordFreqApp
         INFOPLIST_KEY_CFBundleDisplayName: WordFreqApp
         INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.productivity
@@ -27,8 +29,15 @@ targets:
         SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
         ENABLE_HARDENED_RUNTIME: YES
       configs:
+        Debug:
+          CODE_SIGN_IDENTITY[sdk=macosx*]: "Apple Development"
         Release:
+          CODE_SIGN_STYLE: Manual
+          CODE_SIGN_IDENTITY: "Developer ID Application"
           CODE_SIGN_IDENTITY[sdk=macosx*]: "Developer ID Application"
+          PROVISIONING_PROFILE_SPECIFIER: ""
+          CODE_SIGN_ENTITLEMENTS: WordFreqApp/Config/Release.entitlements
+          CODE_SIGN_INJECT_BASE_ENTITLEMENTS: NO
           ENABLE_HARDENED_RUNTIME: YES
           OTHER_CODE_SIGN_FLAGS: "--timestamp"
     scheme:
