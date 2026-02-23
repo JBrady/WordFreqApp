@@ -41,11 +41,7 @@ osascript <<EOF2
      end try
      set appPos to position of item "WordFreqApp.app" of cw
      set appsPos to position of item "Applications" of cw
-     set readmePos to "<missing>"
-     if exists item "README.txt" of cw then
-       set readmePos to (position of item "README.txt" of cw) as text
-     end if
-     return "mount=" & "$MOUNT_POINT" & ", bg=" & bg & ", app=" & appPos & ", applications=" & appsPos & ", readme=" & readmePos
+     return "mount=" & "$MOUNT_POINT" & ", bg=" & bg & ", app=" & appPos & ", applications=" & appsPos
    end tell
  end tell
 EOF2

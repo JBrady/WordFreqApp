@@ -66,11 +66,6 @@ if [[ ! -d "$MOUNT_POINT/WordFreqApp.app" ]]; then
   exit 1
 fi
 
-if [[ ! -f "$MOUNT_POINT/README.txt" ]]; then
-  echo "ERROR: missing README.txt" >&2
-  exit 1
-fi
-
 if [[ ! -f "$MOUNT_POINT/.DS_Store" ]]; then
   echo "ERROR: missing .DS_Store (Finder layout not persisted)" >&2
   exit 1
@@ -93,11 +88,7 @@ tell application "Finder"
     end try
     set appPos to position of item "WordFreqApp.app" of cw
     set appsPos to position of item "Applications" of cw
-    set readmePos to "<missing>"
-    if exists item "README.txt" of cw then
-      set readmePos to (position of item "README.txt" of cw) as text
-    end if
-    return "view=" & currentViewName & ", bounds=" & windowBounds & ", background=" & bgPicture & ", app=" & appPos & ", applications=" & appsPos & ", readme=" & readmePos
+    return "view=" & currentViewName & ", bounds=" & windowBounds & ", background=" & bgPicture & ", app=" & appPos & ", applications=" & appsPos
   end tell
 end tell
 EOF

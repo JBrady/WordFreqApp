@@ -35,15 +35,14 @@ DMG_VOL_NAME="WordFreqApp" ./scripts/make_dmg.sh ./.build/release/WordFreqApp/Wo
 - `DMG_ICON_SIZE`
 - `DMG_APP_POS_X` / `DMG_APP_POS_Y`
 - `DMG_APPS_POS_X` / `DMG_APPS_POS_Y`
-- `DMG_README_POS_X` / `DMG_README_POS_Y`
 
 Example:
 
 ```bash
 DMG_CANVAS_W=640 DMG_CANVAS_H=400 \
 DMG_CHROME_W=100 DMG_CHROME_H=100 \
-DMG_APP_POS_X=192 DMG_APP_POS_Y=248 \
-DMG_APPS_POS_X=480 DMG_APPS_POS_Y=248 \
+DMG_APP_POS_X=192 DMG_APP_POS_Y=338 \
+DMG_APPS_POS_X=480 DMG_APPS_POS_Y=338 \
 ./scripts/make_dmg.sh ./.build/release/WordFreqApp/WordFreqApp.app ./.build/WordFreqApp.dmg
 ```
 
