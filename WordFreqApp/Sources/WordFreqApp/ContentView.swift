@@ -460,6 +460,26 @@ private struct ResultsCard: View {
 
     @State private var didJustAnalyze = false
     @State private var wasStale = true
+    
+    private enum ContentState {
+        case noFileSelected
+        case stale
+        case noResults
+        case resultsTable
+    }
+    
+    private var contentState: ContentState {
+        if appState.selectedFileURL == nil {
+            return .noFileSelected
+        }
+        if appState.resultsStale {
+            return .stale
+        }
+        if appState.results.isEmpty {
+            return .noResults
+        }
+        return .resultsTable
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -467,16 +487,36 @@ private struct ResultsCard: View {
                 .font(.system(.title3, design: .rounded).weight(.bold))
 
             VStack(spacing: 0) {
-                if appState.resultsStale {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Press Analyze to update results.")
-                            .font(.subheadline.weight(.semibold))
-                            .foregroundStyle(.secondary)
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                    .padding(14)
+                switch contentState {
+                case .noFileSelected:
+                    ResultsEmptyState(
+                        title: "No file selected",
+                        subtitle: "Choose a .txt file to begin.",
+                        hint: "Accepts .txt only.",
+                        systemImage: "doc.text"
+                    )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(.regularMaterial)
-                } else {
+                    
+                case .stale:
+                    ResultsEmptyState(
+                        title: "Results out of date",
+                        subtitle: "Press Analyze to update results.",
+                        systemImage: "exclamationmark.triangle"
+                    )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(.regularMaterial)
+
+                case .noResults:
+                    ResultsEmptyState(
+                        title: "No results",
+                        subtitle: "Try lowering Minimum word length, increasing Number of words to show, or adjusting ignored words.",
+                        systemImage: "magnifyingglass"
+                    )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(.regularMaterial)
+
+                case .resultsTable:
                     Table(appState.filteredResults) {
                         TableColumn("Word", value: \.word)
                             .width(min: 220)
@@ -534,6 +574,38 @@ private struct ResultsCard: View {
                 didJustAnalyze = false
             }
         }
+    }
+}
+
+private struct ResultsEmptyState: View {
+    let title: String
+    let subtitle: String
+    var hint: String? = nil
+    var systemImage: String? = nil
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            if let systemImage {
+                Image(systemName: systemImage)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(.secondary)
+            }
+
+            Text(title)
+                .font(.subheadline.weight(.semibold))
+
+            Text(subtitle)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+            if let hint {
+                Text(hint)
+                    .font(.caption2)
+                    .foregroundStyle(.secondary.opacity(0.9))
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .padding(14)
     }
 }
 
