@@ -5,7 +5,6 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 APP_PATH="${1:-$ROOT_DIR/.build/release/WordFreqApp/WordFreqApp.app}"
 OUT_DMG="${2:-$ROOT_DIR/.build/WordFreqApp.dmg}"
 BACKGROUND_SRC="$ROOT_DIR/assets/dmg-background-source.png"
-README_SRC="$ROOT_DIR/assets/README.txt"
 VERIFY_SCRIPT="$ROOT_DIR/scripts/verify_dmg_layout.sh"
 
 CANVAS_W="${DMG_CANVAS_W:-600}"
@@ -19,11 +18,9 @@ WIN_Y2="${DMG_WIN_Y2:-$((WIN_Y + CANVAS_H + CHROME_H))}"
 ICON_SIZE="${DMG_ICON_SIZE:-128}"
 
 APP_POS_X="${DMG_APP_POS_X:-$((CANVAS_W * 30 / 100))}"
-APP_POS_Y="${DMG_APP_POS_Y:-$((CANVAS_H * 62 / 100))}"
+APP_POS_Y="${DMG_APP_POS_Y:-$((CANVAS_H * 62 / 100 + 90))}"
 APPS_POS_X="${DMG_APPS_POS_X:-$((CANVAS_W * 75 / 100))}"
-APPS_POS_Y="${DMG_APPS_POS_Y:-$((CANVAS_H * 62 / 100))}"
-README_POS_X="${DMG_README_POS_X:-$((CANVAS_W * 30 / 100))}"
-README_POS_Y="${DMG_README_POS_Y:-$((CANVAS_H * 86 / 100))}"
+APPS_POS_Y="${DMG_APPS_POS_Y:-$((CANVAS_H * 62 / 100 + 90))}"
 
 if [[ ! -d "$APP_PATH" ]]; then
   echo "App not found: $APP_PATH" >&2
@@ -44,12 +41,6 @@ fi
 
 if ! [[ "$CANVAS_W" =~ ^[0-9]+$ && "$CANVAS_H" =~ ^[0-9]+$ ]]; then
   echo "Invalid DMG canvas size: DMG_CANVAS_W=$CANVAS_W DMG_CANVAS_H=$CANVAS_H" >&2
-  exit 1
-fi
-
-if [[ ! -f "$README_SRC" ]]; then
-  echo "Missing DMG README asset: $README_SRC" >&2
-  echo "Add assets/README.txt and rerun." >&2
   exit 1
 fi
 
@@ -109,7 +100,6 @@ hdiutil attach "$RW_DMG" -mountpoint "$MOUNT_POINT" -quiet
 echo "==> Populating DMG"
 ditto --rsrc --extattr "$APP_PATH" "$MOUNT_POINT/WordFreqApp.app"
 ln -s /Applications "$MOUNT_POINT/Applications"
-cp "$README_SRC" "$MOUNT_POINT/README.txt"
 
 echo "==> Adding background"
 mkdir -p "$MOUNT_POINT/.background"
@@ -161,9 +151,6 @@ else
       set background picture of viewOptions to file ".background:background.png"
       set position of item "WordFreqApp.app" of cw to {$APP_POS_X, $APP_POS_Y}
       set position of item "Applications" of cw to {$APPS_POS_X, $APPS_POS_Y}
-      if exists item "README.txt" of cw then
-        set position of item "README.txt" of cw to {$README_POS_X, $README_POS_Y}
-      end if
       if exists item ".background" of cw then
         set position of item ".background" of cw to {900, 900}
       end if
