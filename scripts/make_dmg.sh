@@ -5,6 +5,8 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 APP_PATH="${1:-$ROOT_DIR/.build/release/WordFreqApp/WordFreqApp.app}"
 OUT_DMG="${2:-$ROOT_DIR/.build/WordFreqApp.dmg}"
 BACKGROUND_SRC="$ROOT_DIR/assets/dmg-background.png"
+README_SRC="$ROOT_DIR/assets/README.txt"
+VERIFY_SCRIPT="$ROOT_DIR/scripts/verify_dmg_layout.sh"
 
 if [[ ! -d "$APP_PATH" ]]; then
   echo "App not found: $APP_PATH" >&2
@@ -17,11 +19,39 @@ if [[ ! -f "$BACKGROUND_SRC" ]]; then
   exit 1
 fi
 
+if [[ ! -f "$README_SRC" ]]; then
+  echo "Missing DMG README asset: $README_SRC" >&2
+  echo "Add assets/README.txt and rerun." >&2
+  exit 1
+fi
+
+if [[ ! -x "$VERIFY_SCRIPT" ]]; then
+  echo "Missing DMG layout verifier: $VERIFY_SCRIPT" >&2
+  echo "Ensure scripts/verify_dmg_layout.sh exists and is executable." >&2
+  exit 1
+fi
+
 mkdir -p "$(dirname "$OUT_DMG")"
 TMP_DIR="$(mktemp -d)"
 RW_DMG="$TMP_DIR/WordFreqApp-rw.dmg"
-VOL_NAME="WordFreqApp"
 MOUNT_POINT="$TMP_DIR/mount"
+
+if [[ -n "${DMG_VOL_NAME:-}" ]]; then
+  VOL_NAME="$DMG_VOL_NAME"
+else
+  SHORT_VERSION=""
+  BUILD_VERSION=""
+  INFO_PLIST="$APP_PATH/Contents/Info.plist"
+  if [[ -f "$INFO_PLIST" ]]; then
+    SHORT_VERSION="$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" "$INFO_PLIST" 2>/dev/null || true)"
+    BUILD_VERSION="$(/usr/libexec/PlistBuddy -c "Print :CFBundleVersion" "$INFO_PLIST" 2>/dev/null || true)"
+  fi
+  if [[ -n "$SHORT_VERSION" && -n "$BUILD_VERSION" ]]; then
+    VOL_NAME="WordFreqApp ${SHORT_VERSION}(${BUILD_VERSION})"
+  else
+    VOL_NAME="WordFreqApp $(date '+%Y%m%d-%H%M')"
+  fi
+fi
 
 cleanup() {
   hdiutil detach "$MOUNT_POINT" -quiet 2>/dev/null || true
@@ -47,6 +77,7 @@ hdiutil attach "$RW_DMG" -mountpoint "$MOUNT_POINT" -quiet
 echo "==> Populating DMG"
 ditto --rsrc --extattr "$APP_PATH" "$MOUNT_POINT/WordFreqApp.app"
 ln -s /Applications "$MOUNT_POINT/Applications"
+cp "$README_SRC" "$MOUNT_POINT/README.txt"
 
 echo "==> Adding background"
 mkdir -p "$MOUNT_POINT/.background"
@@ -76,6 +107,7 @@ tell application "Finder"
     end try
     set position of item "WordFreqApp.app" to {180, 250}
     set position of item "Applications" to {480, 250}
+    set position of item "README.txt" to {180, 390}
     try
       update without registering applications
     end try
@@ -100,5 +132,8 @@ hdiutil detach "$MOUNT_POINT" -quiet
 echo "==> Converting DMG"
 rm -f "$OUT_DMG"
 hdiutil convert "$RW_DMG" -format UDZO -o "$OUT_DMG" -quiet
+
+echo "==> Verifying DMG layout payload"
+"$VERIFY_SCRIPT" "$OUT_DMG"
 
 echo "Created DMG: $OUT_DMG"
