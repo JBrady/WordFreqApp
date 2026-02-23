@@ -7,6 +7,9 @@ settings:
     SWIFT_VERSION: 5.9
     MACOSX_DEPLOYMENT_TARGET: 13.0
     CODE_SIGN_STYLE: Automatic
+  configs:
+    Release:
+      DEBUG_INFORMATION_FORMAT: "dwarf-with-dsym"
 targets:
   WordFreqApp:
     type: application
@@ -23,6 +26,11 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
         SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: NO
         ENABLE_HARDENED_RUNTIME: YES
+      configs:
+        Release:
+          CODE_SIGN_IDENTITY[sdk=macosx*]: "Developer ID Application"
+          ENABLE_HARDENED_RUNTIME: YES
+          OTHER_CODE_SIGN_FLAGS: "--timestamp"
     scheme:
       testTargets:
         - WordFreqAppTests
