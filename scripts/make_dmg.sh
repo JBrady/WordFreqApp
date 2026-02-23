@@ -11,7 +11,6 @@ if [[ ! -d "$APP_PATH" ]]; then
   exit 1
 fi
 
-mkdir -p "$ROOT_DIR/assets"
 if [[ ! -f "$BACKGROUND_SRC" ]]; then
   echo "Missing DMG background: $BACKGROUND_SRC" >&2
   echo "Add assets/dmg-background.png (600x400) and rerun." >&2
@@ -22,7 +21,7 @@ mkdir -p "$(dirname "$OUT_DMG")"
 TMP_DIR="$(mktemp -d)"
 RW_DMG="$TMP_DIR/WordFreqApp-rw.dmg"
 VOL_NAME="WordFreqApp"
-MOUNT_POINT="/Volumes/$VOL_NAME"
+MOUNT_POINT="$TMP_DIR/mount"
 
 cleanup() {
   hdiutil detach "$MOUNT_POINT" -quiet 2>/dev/null || true
@@ -42,9 +41,7 @@ hdiutil create \
   -quiet
 
 echo "==> Attaching DMG"
-if [[ -d "$MOUNT_POINT" ]]; then
-  hdiutil detach "$MOUNT_POINT" -quiet 2>/dev/null || true
-fi
+mkdir -p "$MOUNT_POINT"
 hdiutil attach "$RW_DMG" -mountpoint "$MOUNT_POINT" -quiet
 
 echo "==> Populating DMG"
@@ -58,26 +55,34 @@ cp "$BACKGROUND_SRC" "$MOUNT_POINT/.background/background.png"
 echo "==> Configuring Finder layout"
 if ! osascript <<EOF
 tell application "Finder"
-  tell disk "WordFreqApp"
-    open
-    tell container window
-      set current view to icon view
-      set toolbar visible to false
-      set statusbar visible to false
-      set bounds to {100, 100, 700, 500}
-    end tell
-    set theViewOptions to the icon view options of container window
-    set arrangement of theViewOptions to not arranged
-    set icon size of theViewOptions to 128
-    set bgFile to POSIX file "$MOUNT_POINT/.background/background.png" as alias
-    set background picture of theViewOptions to bgFile
-    set position of item "WordFreqApp.app" of container window to {180, 250}
-    set position of item "Applications" of container window to {480, 250}
-    update without registering applications
+  set mountAlias to POSIX file "$MOUNT_POINT" as alias
+  set mountDisk to disk of mountAlias
+  open mountDisk
+  delay 0.5
+  tell container window of mountDisk
+    set current view to icon view
+    set toolbar visible to false
+    set statusbar visible to false
+    set bounds to {100, 100, 700, 500}
+    set theViewOptions to the icon view options
+    try
+      set arrangement of theViewOptions to not arranged
+    end try
+    try
+      set icon size of theViewOptions to 128
+    end try
+    try
+      set background picture of theViewOptions to file ".background:background.png"
+    end try
+    set position of item "WordFreqApp.app" to {180, 250}
+    set position of item "Applications" to {480, 250}
+    try
+      update without registering applications
+    end try
     delay 1
     close
   end tell
-end tell
+  end tell
 EOF
 then
   echo "WARNING: Finder layout configuration failed; continuing without custom layout." >&2
