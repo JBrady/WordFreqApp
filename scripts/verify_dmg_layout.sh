@@ -16,6 +16,10 @@ if [[ ! -f "$DMG_PATH" ]]; then
   exit 1
 fi
 
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+EXPECTED_W="${DMG_CANVAS_W:-600}"
+EXPECTED_H="${DMG_CANVAS_H:-400}"
+
 TMP_DIR="$(mktemp -d)"
 MOUNT_POINT=""
 
@@ -36,6 +40,13 @@ fi
 
 if [[ ! -f "$MOUNT_POINT/.background/background.png" ]]; then
   echo "ERROR: missing background image at .background/background.png" >&2
+  exit 1
+fi
+
+BG_WIDTH="$(sips -g pixelWidth "$MOUNT_POINT/.background/background.png" 2>/dev/null | awk -F': ' '/pixelWidth/ {print $2}')"
+BG_HEIGHT="$(sips -g pixelHeight "$MOUNT_POINT/.background/background.png" 2>/dev/null | awk -F': ' '/pixelHeight/ {print $2}')"
+if [[ "$BG_WIDTH" != "$EXPECTED_W" || "$BG_HEIGHT" != "$EXPECTED_H" ]]; then
+  echo "ERROR: background dimensions mismatch (got ${BG_WIDTH}x${BG_HEIGHT}, expected ${EXPECTED_W}x${EXPECTED_H})" >&2
   exit 1
 fi
 
@@ -94,6 +105,26 @@ EOF
   echo "Finder layout info: $FINDER_INFO"
 else
   echo "WARNING: Unable to query Finder layout details (non-fatal)." >&2
+fi
+
+if WINDOW_ID="$(osascript <<EOF 2>/dev/null
+tell application "Finder"
+  tell disk "$VOLUME_NAME"
+    open
+    delay 0.3
+    return id of container window
+  end tell
+end tell
+EOF
+)"; then
+  mkdir -p "$ROOT_DIR/.build"
+  if screencapture -x -l "$WINDOW_ID" "$ROOT_DIR/.build/dmg-window.png" 2>/dev/null; then
+    echo "Finder screenshot: $ROOT_DIR/.build/dmg-window.png"
+  else
+    echo "WARNING: Unable to capture Finder window screenshot (non-fatal)." >&2
+  fi
+else
+  echo "WARNING: Unable to get Finder window id for screenshot (non-fatal)." >&2
 fi
 
 echo "DMG layout verification passed"
