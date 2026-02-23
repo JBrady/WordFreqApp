@@ -11,7 +11,10 @@
 		1F1CCBDB23762B8A48F40A6D /* Analyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E506B5863E4C59D76C9EB4B /* Analyzer.swift */; };
 		1F6E82DCE80F58A8CC53DE16 /* CSVExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A61468F5686430D95B294AA /* CSVExporter.swift */; };
 		263682BC398588B6AB4C7803 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 097DF155D265C037D509792E /* AppState.swift */; };
+		30FF3390A65BFB87F74899AA /* DebugView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE356EBF41969AF77C68A9BF /* DebugView.swift */; };
+		578FBF54587D93A455971578 /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4ADE892D51EECB6BA0641B77 /* ToastView.swift */; };
 		64718841E23D82C9A83296BA /* Tokenizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D89C14C64F430ABBA2CE7EA0 /* Tokenizer.swift */; };
+		67E8C686A35490DB176192AC /* AppTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CDF4CE047455B808B2148E0 /* AppTheme.swift */; };
 		6D745979D05CE9DD2CDB94C5 /* Stopwords.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF20F0EE7BD24B078BE1B675 /* Stopwords.swift */; };
 		8B5D5D616459CF78348BFD6A /* Clamp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AE52FAED6BD4DD3CACE4FE3 /* Clamp.swift */; };
 		9D936147911FFDE9DA16504D /* Normalizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5732FDEDF69059C40A51AEEF /* Normalizer.swift */; };
@@ -20,6 +23,8 @@
 		B10D93C4D2DDE019F24FD951 /* TextLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDDA79A9399A67599D26CC3E /* TextLoader.swift */; };
 		C0145F19A4661A23C87EFC7F /* TextLoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82CD92813DAF0E97C80496F1 /* TextLoaderTests.swift */; };
 		D4FB1A1BF415087526C7CD2D /* WordFreqAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19910C3D955E92751DE41028 /* WordFreqAppApp.swift */; };
+		F0007A12453037B91A5836D4 /* PrimaryButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A332B28A28E886FAA78C48 /* PrimaryButtonStyle.swift */; };
+		F34FB9407059F6DABADEFB8A /* GlassCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30C637DB7CEB4E5D9B0C4333 /* GlassCard.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,15 +42,20 @@
 		19910C3D955E92751DE41028 /* WordFreqAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WordFreqAppApp.swift; sourceTree = "<group>"; };
 		1AE52FAED6BD4DD3CACE4FE3 /* Clamp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Clamp.swift; sourceTree = "<group>"; };
 		28ACE8D4A918E63721AF4B68 /* AnalyzerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyzerTests.swift; sourceTree = "<group>"; };
+		30C637DB7CEB4E5D9B0C4333 /* GlassCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlassCard.swift; sourceTree = "<group>"; };
 		3A61468F5686430D95B294AA /* CSVExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSVExporter.swift; sourceTree = "<group>"; };
+		4ADE892D51EECB6BA0641B77 /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
 		5732FDEDF69059C40A51AEEF /* Normalizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Normalizer.swift; sourceTree = "<group>"; };
 		69AC33E5FEA65061B31E4CDC /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		7CDF4CE047455B808B2148E0 /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		82CD92813DAF0E97C80496F1 /* TextLoaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextLoaderTests.swift; sourceTree = "<group>"; };
+		88A332B28A28E886FAA78C48 /* PrimaryButtonStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryButtonStyle.swift; sourceTree = "<group>"; };
 		8AC1B7CA5912C82DDF226494 /* stopwords_en.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = stopwords_en.txt; sourceTree = "<group>"; };
 		9E506B5863E4C59D76C9EB4B /* Analyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analyzer.swift; sourceTree = "<group>"; };
 		A4FA25F0CF962CC7CEFE6117 /* WordFreqAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WordFreqAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B243D4EC878975BF664C6CE3 /* WordFreqApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WordFreqApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D89C14C64F430ABBA2CE7EA0 /* Tokenizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tokenizer.swift; sourceTree = "<group>"; };
+		EE356EBF41969AF77C68A9BF /* DebugView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugView.swift; sourceTree = "<group>"; };
 		FDDA79A9399A67599D26CC3E /* TextLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextLoader.swift; sourceTree = "<group>"; };
 		FF20F0EE7BD24B078BE1B675 /* Stopwords.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stopwords.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -74,12 +84,17 @@
 			children = (
 				9E506B5863E4C59D76C9EB4B /* Analyzer.swift */,
 				097DF155D265C037D509792E /* AppState.swift */,
+				7CDF4CE047455B808B2148E0 /* AppTheme.swift */,
 				1AE52FAED6BD4DD3CACE4FE3 /* Clamp.swift */,
 				69AC33E5FEA65061B31E4CDC /* ContentView.swift */,
 				3A61468F5686430D95B294AA /* CSVExporter.swift */,
+				EE356EBF41969AF77C68A9BF /* DebugView.swift */,
+				30C637DB7CEB4E5D9B0C4333 /* GlassCard.swift */,
 				5732FDEDF69059C40A51AEEF /* Normalizer.swift */,
+				88A332B28A28E886FAA78C48 /* PrimaryButtonStyle.swift */,
 				FF20F0EE7BD24B078BE1B675 /* Stopwords.swift */,
 				FDDA79A9399A67599D26CC3E /* TextLoader.swift */,
+				4ADE892D51EECB6BA0641B77 /* ToastView.swift */,
 				D89C14C64F430ABBA2CE7EA0 /* Tokenizer.swift */,
 				19910C3D955E92751DE41028 /* WordFreqAppApp.swift */,
 			);
@@ -209,12 +224,17 @@
 			files = (
 				1F1CCBDB23762B8A48F40A6D /* Analyzer.swift in Sources */,
 				263682BC398588B6AB4C7803 /* AppState.swift in Sources */,
+				67E8C686A35490DB176192AC /* AppTheme.swift in Sources */,
 				1F6E82DCE80F58A8CC53DE16 /* CSVExporter.swift in Sources */,
 				8B5D5D616459CF78348BFD6A /* Clamp.swift in Sources */,
 				1CB53721356F9965318D1CBE /* ContentView.swift in Sources */,
+				30FF3390A65BFB87F74899AA /* DebugView.swift in Sources */,
+				F34FB9407059F6DABADEFB8A /* GlassCard.swift in Sources */,
 				9D936147911FFDE9DA16504D /* Normalizer.swift in Sources */,
+				F0007A12453037B91A5836D4 /* PrimaryButtonStyle.swift in Sources */,
 				6D745979D05CE9DD2CDB94C5 /* Stopwords.swift in Sources */,
 				B10D93C4D2DDE019F24FD951 /* TextLoader.swift in Sources */,
+				578FBF54587D93A455971578 /* ToastView.swift in Sources */,
 				64718841E23D82C9A83296BA /* Tokenizer.swift in Sources */,
 				D4FB1A1BF415087526C7CD2D /* WordFreqAppApp.swift in Sources */,
 			);
