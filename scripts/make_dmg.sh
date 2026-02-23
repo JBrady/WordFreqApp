@@ -4,9 +4,26 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 APP_PATH="${1:-$ROOT_DIR/.build/release/WordFreqApp/WordFreqApp.app}"
 OUT_DMG="${2:-$ROOT_DIR/.build/WordFreqApp.dmg}"
-BACKGROUND_SRC="$ROOT_DIR/assets/dmg-background.png"
+BACKGROUND_SRC="$ROOT_DIR/assets/dmg-background-source.png"
 README_SRC="$ROOT_DIR/assets/README.txt"
 VERIFY_SCRIPT="$ROOT_DIR/scripts/verify_dmg_layout.sh"
+
+CANVAS_W="${DMG_CANVAS_W:-600}"
+CANVAS_H="${DMG_CANVAS_H:-400}"
+CHROME_W="${DMG_CHROME_W:-100}"
+CHROME_H="${DMG_CHROME_H:-100}"
+WIN_X="${DMG_WIN_X:-100}"
+WIN_Y="${DMG_WIN_Y:-100}"
+WIN_X2="${DMG_WIN_X2:-$((WIN_X + CANVAS_W + CHROME_W))}"
+WIN_Y2="${DMG_WIN_Y2:-$((WIN_Y + CANVAS_H + CHROME_H))}"
+ICON_SIZE="${DMG_ICON_SIZE:-128}"
+
+APP_POS_X="${DMG_APP_POS_X:-$((CANVAS_W * 30 / 100))}"
+APP_POS_Y="${DMG_APP_POS_Y:-$((CANVAS_H * 62 / 100))}"
+APPS_POS_X="${DMG_APPS_POS_X:-$((CANVAS_W * 75 / 100))}"
+APPS_POS_Y="${DMG_APPS_POS_Y:-$((CANVAS_H * 62 / 100))}"
+README_POS_X="${DMG_README_POS_X:-$((CANVAS_W * 30 / 100))}"
+README_POS_Y="${DMG_README_POS_Y:-$((CANVAS_H * 86 / 100))}"
 
 if [[ ! -d "$APP_PATH" ]]; then
   echo "App not found: $APP_PATH" >&2
@@ -14,8 +31,19 @@ if [[ ! -d "$APP_PATH" ]]; then
 fi
 
 if [[ ! -f "$BACKGROUND_SRC" ]]; then
-  echo "Missing DMG background: $BACKGROUND_SRC" >&2
-  echo "Add assets/dmg-background.png (600x400) and rerun." >&2
+  # Backward compatibility for previous asset path.
+  LEGACY_BACKGROUND="$ROOT_DIR/assets/dmg-background.png"
+  if [[ -f "$LEGACY_BACKGROUND" ]]; then
+    BACKGROUND_SRC="$LEGACY_BACKGROUND"
+  else
+    echo "Missing DMG background source: $BACKGROUND_SRC" >&2
+    echo "Add assets/dmg-background-source.png and rerun." >&2
+    exit 1
+  fi
+fi
+
+if ! [[ "$CANVAS_W" =~ ^[0-9]+$ && "$CANVAS_H" =~ ^[0-9]+$ ]]; then
+  echo "Invalid DMG canvas size: DMG_CANVAS_W=$CANVAS_W DMG_CANVAS_H=$CANVAS_H" >&2
   exit 1
 fi
 
@@ -85,7 +113,7 @@ cp "$README_SRC" "$MOUNT_POINT/README.txt"
 
 echo "==> Adding background"
 mkdir -p "$MOUNT_POINT/.background"
-cp "$BACKGROUND_SRC" "$MOUNT_POINT/.background/background.png"
+sips -z "$CANVAS_H" "$CANVAS_W" "$BACKGROUND_SRC" --out "$MOUNT_POINT/.background/background.png" >/dev/null
 
 echo "==> Verifying copied app code signature"
 codesign -vvv --deep --strict "$MOUNT_POINT/WordFreqApp.app"
@@ -122,19 +150,19 @@ else
       set current view of cw to icon view
       set toolbar visible of cw to false
       set statusbar visible of cw to false
-      set bounds of cw to {100, 100, 700, 500}
+      set bounds of cw to {$WIN_X, $WIN_Y, $WIN_X2, $WIN_Y2}
       set viewOptions to the icon view options of cw
       try
         set arrangement of viewOptions to not arranged
       end try
       try
-        set icon size of viewOptions to 128
+        set icon size of viewOptions to $ICON_SIZE
       end try
       set background picture of viewOptions to file ".background:background.png"
-      set position of item "WordFreqApp.app" of cw to {180, 250}
-      set position of item "Applications" of cw to {480, 250}
+      set position of item "WordFreqApp.app" of cw to {$APP_POS_X, $APP_POS_Y}
+      set position of item "Applications" of cw to {$APPS_POS_X, $APPS_POS_Y}
       if exists item "README.txt" of cw then
-        set position of item "README.txt" of cw to {180, 360}
+        set position of item "README.txt" of cw to {$README_POS_X, $README_POS_Y}
       end if
       if exists item ".background" of cw then
         set position of item ".background" of cw to {900, 900}
