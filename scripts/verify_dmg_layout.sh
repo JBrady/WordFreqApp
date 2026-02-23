@@ -17,17 +17,22 @@ if [[ ! -f "$DMG_PATH" ]]; then
 fi
 
 TMP_DIR="$(mktemp -d)"
-MOUNT_POINT="$TMP_DIR/mount"
+MOUNT_POINT=""
 
 cleanup() {
-  hdiutil detach "$MOUNT_POINT" -quiet 2>/dev/null || true
+  if [[ -n "$MOUNT_POINT" ]]; then
+    hdiutil detach "$MOUNT_POINT" -quiet 2>/dev/null || true
+  fi
   rm -rf "$TMP_DIR"
 }
 trap cleanup EXIT
 
-mkdir -p "$MOUNT_POINT"
-ATTACH_OUTPUT="$(hdiutil attach -nobrowse -readonly -mountpoint "$MOUNT_POINT" "$DMG_PATH")"
-printf '%s\n' "$ATTACH_OUTPUT" >/dev/null
+ATTACH_OUTPUT="$(hdiutil attach -nobrowse -readonly "$DMG_PATH")"
+MOUNT_POINT="$(printf '%s\n' "$ATTACH_OUTPUT" | awk -F '\t' '/Apple_HFS/ {print $NF}' | tail -n1)"
+if [[ -z "$MOUNT_POINT" ]]; then
+  echo "ERROR: failed to determine mount point for DMG" >&2
+  exit 1
+fi
 
 if [[ ! -f "$MOUNT_POINT/.background/background.png" ]]; then
   echo "ERROR: missing background image at .background/background.png" >&2
@@ -60,26 +65,35 @@ if [[ ! -f "$MOUNT_POINT/.DS_Store" ]]; then
   exit 1
 fi
 
-if BG_INFO="$(osascript <<EOF 2>/dev/null
+VOLUME_NAME="$(basename "$MOUNT_POINT")"
+if FINDER_INFO="$(osascript <<EOF 2>/dev/null
 tell application "Finder"
-  set mountAlias to POSIX file "$MOUNT_POINT" as alias
-  set mountDisk to disk of mountAlias
-  open mountDisk
-  delay 0.2
-  tell container window of mountDisk
+  tell disk "$VOLUME_NAME"
+    open
+    delay 0.3
+    set cw to container window
+    set currentViewName to current view of cw as text
+    set windowBounds to bounds of cw
+    set vo to icon view options of cw
     try
-      set bgPicture to background picture of icon view options
-      return bgPicture as text
+      set bgPicture to background picture of vo as text
     on error
-      return "<not set>"
+      set bgPicture to "<not set>"
     end try
+    set appPos to position of item "WordFreqApp.app" of cw
+    set appsPos to position of item "Applications" of cw
+    set readmePos to "<missing>"
+    if exists item "README.txt" of cw then
+      set readmePos to (position of item "README.txt" of cw) as text
+    end if
+    return "view=" & currentViewName & ", bounds=" & windowBounds & ", background=" & bgPicture & ", app=" & appPos & ", applications=" & appsPos & ", readme=" & readmePos
   end tell
 end tell
 EOF
 )"; then
-  echo "Finder background picture: $BG_INFO"
+  echo "Finder layout info: $FINDER_INFO"
 else
-  echo "INFO: Unable to query Finder background picture (non-fatal)." >&2
+  echo "WARNING: Unable to query Finder layout details (non-fatal)." >&2
 fi
 
 echo "DMG layout verification passed"

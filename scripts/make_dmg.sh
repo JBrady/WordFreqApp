@@ -111,16 +111,19 @@ if [[ -z "$LAYOUT_MOUNT_POINT" ]]; then
 else
   echo "Layout mount point: $LAYOUT_MOUNT_POINT"
   LAYOUT_VOL_NAME="$(basename "$LAYOUT_MOUNT_POINT")"
-  if ! osascript <<EOF2
+  LAYOUT_VOL_NAME_ESCAPED="${LAYOUT_VOL_NAME//\"/\\\"}"
+  APPLESCRIPT_LOG="$TMP_DIR/finder-layout.applescript.log"
+  if ! BG_QUERY="$(osascript 2>"$APPLESCRIPT_LOG" <<EOF2
   tell application "Finder"
-    tell disk "$LAYOUT_VOL_NAME"
+    tell disk "$LAYOUT_VOL_NAME_ESCAPED"
       open
       delay 0.5
-      set current view of container window to icon view
-      set toolbar visible of container window to false
-      set statusbar visible of container window to false
-      set bounds of container window to {100, 100, 700, 500}
-      set viewOptions to the icon view options of container window
+      set cw to container window
+      set current view of cw to icon view
+      set toolbar visible of cw to false
+      set statusbar visible of cw to false
+      set bounds of cw to {100, 100, 700, 500}
+      set viewOptions to the icon view options of cw
       try
         set arrangement of viewOptions to not arranged
       end try
@@ -128,19 +131,43 @@ else
         set icon size of viewOptions to 128
       end try
       set background picture of viewOptions to file ".background:background.png"
-      set position of item "WordFreqApp.app" of container window to {180, 250}
-      set position of item "Applications" of container window to {480, 250}
-      set position of item "README.txt" of container window to {180, 390}
+      set position of item "WordFreqApp.app" of cw to {180, 250}
+      set position of item "Applications" of cw to {480, 250}
+      if exists item "README.txt" of cw then
+        set position of item "README.txt" of cw to {180, 360}
+      end if
+      if exists item ".background" of cw then
+        set position of item ".background" of cw to {900, 900}
+      end if
+      if exists item ".fseventsd" of cw then
+        set position of item ".fseventsd" of cw to {960, 900}
+      end if
+      if exists item ".Trashes" of cw then
+        set position of item ".Trashes" of cw to {1020, 900}
+      end if
       try
         update without registering applications
       end try
+      try
+        set bgPicture to background picture of viewOptions as text
+      on error
+        set bgPicture to "<not set>"
+      end try
       delay 1
       close
+      return bgPicture
     end tell
   end tell
 EOF2
+  )"
   then
     echo "WARNING: Finder layout configuration failed; continuing without custom layout." >&2
+    if [[ -s "$APPLESCRIPT_LOG" ]]; then
+      echo "AppleScript stderr:" >&2
+      cat "$APPLESCRIPT_LOG" >&2
+    fi
+  else
+    echo "Finder background picture after set: $BG_QUERY"
   fi
   hdiutil detach "$LAYOUT_MOUNT_POINT" -quiet
   LAYOUT_MOUNT_POINT=""
