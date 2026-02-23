@@ -60,4 +60,26 @@ if [[ ! -f "$MOUNT_POINT/.DS_Store" ]]; then
   exit 1
 fi
 
+if BG_INFO="$(osascript <<EOF 2>/dev/null
+tell application "Finder"
+  set mountAlias to POSIX file "$MOUNT_POINT" as alias
+  set mountDisk to disk of mountAlias
+  open mountDisk
+  delay 0.2
+  tell container window of mountDisk
+    try
+      set bgPicture to background picture of icon view options
+      return bgPicture as text
+    on error
+      return "<not set>"
+    end try
+  end tell
+end tell
+EOF
+)"; then
+  echo "Finder background picture: $BG_INFO"
+else
+  echo "INFO: Unable to query Finder background picture (non-fatal)." >&2
+fi
+
 echo "DMG layout verification passed"

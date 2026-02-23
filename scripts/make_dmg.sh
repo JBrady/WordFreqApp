@@ -35,6 +35,7 @@ mkdir -p "$(dirname "$OUT_DMG")"
 TMP_DIR="$(mktemp -d)"
 RW_DMG="$TMP_DIR/WordFreqApp-rw.dmg"
 MOUNT_POINT="$TMP_DIR/mount"
+LAYOUT_MOUNT_POINT=""
 
 if [[ -n "${DMG_VOL_NAME:-}" ]]; then
   VOL_NAME="$DMG_VOL_NAME"
@@ -54,6 +55,9 @@ else
 fi
 
 cleanup() {
+  if [[ -n "$LAYOUT_MOUNT_POINT" ]]; then
+    hdiutil detach "$LAYOUT_MOUNT_POINT" -quiet 2>/dev/null || true
+  fi
   hdiutil detach "$MOUNT_POINT" -quiet 2>/dev/null || true
   rm -rf "$TMP_DIR"
 }
@@ -83,43 +87,6 @@ echo "==> Adding background"
 mkdir -p "$MOUNT_POINT/.background"
 cp "$BACKGROUND_SRC" "$MOUNT_POINT/.background/background.png"
 
-echo "==> Configuring Finder layout"
-if ! osascript <<EOF
-tell application "Finder"
-  set mountAlias to POSIX file "$MOUNT_POINT" as alias
-  set mountDisk to disk of mountAlias
-  open mountDisk
-  delay 0.5
-  tell container window of mountDisk
-    set current view to icon view
-    set toolbar visible to false
-    set statusbar visible to false
-    set bounds to {100, 100, 700, 500}
-    set theViewOptions to the icon view options
-    try
-      set arrangement of theViewOptions to not arranged
-    end try
-    try
-      set icon size of theViewOptions to 128
-    end try
-    try
-      set background picture of theViewOptions to file ".background:background.png"
-    end try
-    set position of item "WordFreqApp.app" to {180, 250}
-    set position of item "Applications" to {480, 250}
-    set position of item "README.txt" to {180, 390}
-    try
-      update without registering applications
-    end try
-    delay 1
-    close
-  end tell
-  end tell
-EOF
-then
-  echo "WARNING: Finder layout configuration failed; continuing without custom layout." >&2
-fi
-
 echo "==> Verifying copied app code signature"
 codesign -vvv --deep --strict "$MOUNT_POINT/WordFreqApp.app"
 
@@ -128,6 +95,56 @@ xcrun stapler validate "$MOUNT_POINT/WordFreqApp.app" || true
 
 sync
 hdiutil detach "$MOUNT_POINT" -quiet
+
+echo "==> Applying Finder layout"
+while IFS= read -r existing_mount; do
+  [[ -z "$existing_mount" ]] && continue
+  if [[ "$existing_mount" == "/Volumes/$VOL_NAME" || "$existing_mount" == "/Volumes/$VOL_NAME "* ]]; then
+    hdiutil detach "$existing_mount" -quiet 2>/dev/null || true
+  fi
+done < <(hdiutil info | awk -F '\t' '/Apple_HFS/ {print $NF}')
+
+ATTACH_OUTPUT="$(hdiutil attach "$RW_DMG" -nobrowse)"
+LAYOUT_MOUNT_POINT="$(printf '%s\n' "$ATTACH_OUTPUT" | awk -F '\t' '/Apple_HFS/ {print $NF}' | tail -n1)"
+if [[ -z "$LAYOUT_MOUNT_POINT" ]]; then
+  echo "WARNING: Could not determine layout mount point; skipping Finder layout." >&2
+else
+  echo "Layout mount point: $LAYOUT_MOUNT_POINT"
+  LAYOUT_VOL_NAME="$(basename "$LAYOUT_MOUNT_POINT")"
+  if ! osascript <<EOF2
+  tell application "Finder"
+    tell disk "$LAYOUT_VOL_NAME"
+      open
+      delay 0.5
+      set current view of container window to icon view
+      set toolbar visible of container window to false
+      set statusbar visible of container window to false
+      set bounds of container window to {100, 100, 700, 500}
+      set viewOptions to the icon view options of container window
+      try
+        set arrangement of viewOptions to not arranged
+      end try
+      try
+        set icon size of viewOptions to 128
+      end try
+      set background picture of viewOptions to file ".background:background.png"
+      set position of item "WordFreqApp.app" of container window to {180, 250}
+      set position of item "Applications" of container window to {480, 250}
+      set position of item "README.txt" of container window to {180, 390}
+      try
+        update without registering applications
+      end try
+      delay 1
+      close
+    end tell
+  end tell
+EOF2
+  then
+    echo "WARNING: Finder layout configuration failed; continuing without custom layout." >&2
+  fi
+  hdiutil detach "$LAYOUT_MOUNT_POINT" -quiet
+  LAYOUT_MOUNT_POINT=""
+fi
 
 echo "==> Converting DMG"
 rm -f "$OUT_DMG"
