@@ -433,7 +433,7 @@ private struct OptionsCard: View {
                 TextEditor(text: $appState.additionalStopwordsText)
                     .font(.system(.body, design: .monospaced))
                     .focused($isIgnoreWordsFocused)
-                    .scrollContentBackground(.hidden)
+                    .hideTextEditorScrollBackgroundIfAvailable()
                     .frame(minHeight: 90, maxHeight: 120)
                     .inputSurface(cornerRadius: 10, focused: isIgnoreWordsFocused)
                     .onChange(of: appState.additionalStopwordsText) { _ in
@@ -452,6 +452,17 @@ private struct OptionsCard: View {
         .padding(AppTheme.cardPadding)
         .frame(maxWidth: .infinity, maxHeight: fillsHeight ? .infinity : nil, alignment: .topLeading)
         .glassCardStyle()
+    }
+}
+
+private extension View {
+    @ViewBuilder
+    func hideTextEditorScrollBackgroundIfAvailable() -> some View {
+        if #available(macOS 13.0, *) {
+            self.scrollContentBackground(.hidden)
+        } else {
+            self
+        }
     }
 }
 
