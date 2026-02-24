@@ -6,7 +6,7 @@ settings:
     PRODUCT_BUNDLE_IDENTIFIER: com.example.WordFreqApp
     DEVELOPMENT_TEAM: Z9D957576J
     SWIFT_VERSION: 5.9
-    MACOSX_DEPLOYMENT_TARGET: 13.0
+    MACOSX_DEPLOYMENT_TARGET: 12.0
     CODE_SIGN_STYLE: Automatic
   configs:
     Release:

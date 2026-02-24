@@ -70,3 +70,23 @@ Manual verification:
 ```bash
 ./scripts/verify_dmg_layout.sh ./.build/WordFreqApp.dmg
 ```
+
+## Test on macOS 12 with Tart
+
+One-liners:
+
+```bash
+./scripts/tart_setup_monterey.sh --recreate
+./scripts/build_release.sh && ./scripts/make_dmg.sh
+./scripts/tart_push_app_to_vm.sh --artifact dmg
+```
+
+Useful reset:
+
+```bash
+./scripts/tart_cleanup.sh monterey
+```
+
+Important limitation:
+
+- `tart run --dir ...` directory sharing is not available for macOS 12 guests. Tart directory sharing requires macOS 13+ in the guest, so for Monterey use `scp` (preferred) or Screen Sharing drag-and-drop/clipboard fallback.

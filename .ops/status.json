@@ -1,0 +1,10 @@
+{
+  "build_release": "success",
+  "dmg_packaging": "success",
+  "dmg_opens": "success",
+  "app_launch_local": "unknown",
+  "vm_boot_monterey": "unknown",
+  "app_launch_on_vm": "unknown",
+  "last_error": "",
+  "last_update": "2026-02-24T07:41:44Z"
+}

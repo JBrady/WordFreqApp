@@ -9,3 +9,7 @@ xcuserdata/
 *.xcodeproj/xcuserdata/
 *.app
 *.dmg
+.artifacts/*
+!.artifacts/.keep
+.ops/local.*
+.ops/*.local.*

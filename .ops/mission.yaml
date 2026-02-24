@@ -1,0 +1,18 @@
+id: wordfreqapp-ship
+goal: Ship-ready macOS build + DMG + basic macOS 12 VM test harness
+status: in_progress
+
+acceptance_criteria:
+  - build_release == success
+  - dmg_packaging == success
+  - dmg_opens == success
+  - app_launch_local == success
+  - vm_boot_monterey == success
+  - app_launch_on_vm == success OR documented blocker with next step
+
+constraints:
+  min_macos: 12.0
+  background_mode: none
+  do_not_modify:
+    - app_logic
+    - ui_layout
