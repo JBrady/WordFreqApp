@@ -13,3 +13,5 @@ xcuserdata/
 !.artifacts/.keep
 .ops/local.*
 .ops/*.local.*
+
+dist/
