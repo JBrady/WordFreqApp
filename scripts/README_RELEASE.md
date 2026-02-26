@@ -90,3 +90,11 @@ Useful reset:
 Important limitation:
 
 - `tart run --dir ...` directory sharing is not available for macOS 12 guests. Tart directory sharing requires macOS 13+ in the guest, so for Monterey use `scp` (preferred) or Screen Sharing drag-and-drop/clipboard fallback.
+
+## Notarized Distribution (Recommended)
+
+Produce a notarized and stapled DMG in `dist/` (plus optional ZIP and verification report):
+
+```bash
+./scripts/release_dist.sh --profile AC_PROFILE
+```
